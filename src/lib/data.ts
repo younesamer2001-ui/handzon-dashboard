@@ -145,7 +145,13 @@ export const customers: Customer[] = [
   { name: 'Lars Pedersen', phone: '+47 945 67 890', loc: 'Alna', service: 'Utvendig vask', last: 'I går', count: 1 },
   { name: 'Silje Kristiansen', phone: '+47 956 78 901', loc: 'Lillestrøm', service: 'Utvendig vask', last: 'I dag', count: 4 },
   { name: 'Petter Nilsen', phone: '+47 967 89 012', loc: 'Lørenskog', service: 'Premium pakke', last: 'I dag', count: 2 },
-  { name: 'Anne Bakken', phone: '+47 978 90 123', loc: 'Lambertseter', service: 'Innvendig rens', last: 'I gɚ�K��"r�6�V�C�r������S�t��WB��6V�r����S�r�Cr���#3Br���3�t�V�6g�"r�6W'f�6S�t���fV�F�r&V�2r��7C�s"FvW"6�FV�r�6�V�C�������S�t��w&�BF��r����S�r�Cr��"3CRr���3�tgW'W6WBr�6W'f�6S�uWGfV�F�rf6�r��7C�t�Frr�6�V�C�2������S�uF��R�'6V�r����S�r�Cr�#2CSbr���3�t��v�W'VBr�6W'f�6S�t���fV�F�r�WGfV�F�rr��7C�t�Frr�6�V�C�"������S�u'V�R�VvRr����S�r�CrC"3BScrr���3�tw&�'VBr�6W'f�6S�uWGfV�F�rf6�r��7C�t�Frr�6�V�C�������S�t�WGFR<;�&V�6V�r����S�r�CrC#2CRcs�r���3�u'�V�r�6W'f�6S�u&V֗V���Rr��7C�t�Frr�6�V�C�b������S�tvV�"�&�7F�ffW'6V�r����S�r�CrC3BSbs��r���3�u7F�f�W"r�6W'f�6S�uWGfV�F�rf6�r��7C�t�|��亞r', count: 2 },
+  { name: 'Anne Bakken', phone: '+47 978 90 123', loc: 'Lambertseter', service: 'Innvendig rens', last: 'I går', count: 7 },
+  { name: 'Knut Hansen', phone: '+47 989 01 234', loc: 'Helsfyr', service: 'Innvendig rens', last: '2 dager siden', count: 1 },
+  { name: 'Ingrid Dahl', phone: '+47 990 12 345', loc: 'Furuset', service: 'Utvendig vask', last: 'I dag', count: 3 },
+  { name: 'Tone Larsen', phone: '+47 901 23 456', loc: 'Manglerud', service: 'Innvendig + utvendig', last: 'I dag', count: 2 },
+  { name: 'Rune Hauge', phone: '+47 412 34 567', loc: 'Grorud', service: 'Utvendig vask', last: 'I dag', count: 1 },
+  { name: 'Mette Sørensen', phone: '+47 423 45 678', loc: 'Ryen', service: 'Premium pakke', last: 'I dag', count: 6 },
+  { name: 'Geir Kristoffersen', phone: '+47 434 56 789', loc: 'Stovner', service: 'Utvendig vask', last: 'I går', count: 2 },
   { name: 'Lise Berg', phone: '+47 445 67 890', loc: 'Tveita', service: 'Innvendig rens', last: '2 dager siden', count: 1 },
   { name: 'Trond Haugen', phone: '+47 456 78 901', loc: 'Romsås', service: 'Premium pakke', last: 'I går', count: 4 },
 ];
@@ -153,7 +159,10 @@ export const customers: Customer[] = [
 export const reports: Report[] = [
   { title: 'Ukerapport — Uke 13', date: '24. mars 2026', type: 'weekly', status: 'new', summary: '1 247 anrop, 483 bookinger, 97.3% svarrate. Lillestrøm toppresterte.' },
   { title: 'Ukerapport — Uke 12', date: '17. mars 2026', type: 'weekly', status: 'read', summary: '1 014 anrop, 392 bookinger, 95.2% svarrate. Ny rekord for Bryn.' },
-  { title: 'M�j�.���VG7&�'B(	BfV''V"##br�FFS�s��'2##br�G�S�v���F�ǒr�7FGW3�w&VBr�7V��'��s2�C"�&��C��&�����vW"��b�R6�GB7f'&FR�7F�f�W"f�&&VG&WB6Vr"R�r����F�F�S�uV�W&�'B(	BV�Rr�FFS�s��'2##br�G�S�wvVV�ǒr�7FGW3�w&VBr�7V��'��s��r�&��3s�&�����vW"��b�BR7f'&FR�r����F�F�S�uV�W&�'B(	BV�Rr�FFS�s2��'2##br�G�S�wvVV�ǒr�7FGW3�w&VBr�7V��'��s�#2�&��3S&�����vW"��R�R7f'&FR�r����F�F�S�t�f���ynedsrapport — Januar 2026', date: '1. februar 2026', type: 'monthly', status: 'read', summary: '3 201 anrop, 1 203 bookinger, 94.7% snitt svarrate. Første fulle driftsmåned.' },
+  { title: 'Månedsrapport — Februar 2026', date: '1. mars 2026', type: 'monthly', status: 'read', summary: '3 842 anrop, 1 488 bookinger, 96.1% snitt svarrate. Stovner forbedret seg 12%.' },
+  { title: 'Ukerapport — Uke 11', date: '10. mars 2026', type: 'weekly', status: 'read', summary: '987 anrop, 378 bookinger, 96.4% svarrate.' },
+  { title: 'Ukerapport — Uke 10', date: '3. mars 2026', type: 'weekly', status: 'read', summary: '923 anrop, 351 bookinger, 95.8% svarrate.' },
+  { title: 'Månedsrapport — Januar 2026', date: '1. februar 2026', type: 'monthly', status: 'read', summary: '3 201 anrop, 1 203 bookinger, 94.7% snitt svarrate. Første fulle driftsmåned.' },
   { title: 'Ukerapport — Uke 9', date: '24. februar 2026', type: 'weekly', status: 'read', summary: '891 anrop, 334 bookinger, 95.1% svarrate.' },
   { title: 'Oppstartsrapport', date: '15. januar 2026', type: 'monthly', status: 'read', summary: 'Alle 14 lokasjoner aktivert. Første uke: 412 anrop, 142 bookinger.' },
 ];
