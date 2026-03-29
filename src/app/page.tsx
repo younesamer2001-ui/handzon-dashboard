@@ -421,8 +421,8 @@ function LiveDemoButton() {
           <Mic className="w-4 h-4" />
         </div>
         <div className="text-left">
-          <p className="text-sm font-bold">Prøv AI assistenten live</p>
-          <p className="text-xs text-blue-200">Ring og hør sev�l</p>
+          <p className="text-sm font-bold">Prøv AI ­assistenten live</p>
+          <p className="text-xs text-blue-200">Ring og hør lv</p>
         </div>
         <ArrowRight className="w-4 h-4 ml-2" />
       </motion.button>
@@ -549,4 +549,636 @@ function OversiktPage({ onSelectLocation, onSelectCall }: { onSelectLocation: (l
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-white">12</p>
-                <p className="text-gray-400 text-sm">Overført ti �V��W6�S�����F�c���F�c���F�c���F�cࠢ���W'G2��Т�F�c��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b#��F�b6�74��S�&f�W��FV�2�6V�FW"v�"�"�B#���W'D6�&6�R6�74��S�'r�R��RFW�B��&�vR�C"��ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B#�f'6�W#���3���F�c��F�b6�74��S�'76Rג�2#��F�b6�74��S�'�2&�V�FVB��r&r��&�vR�S�&�&FW"&�&FW"��&�vR�S�##��6�74��S�'FW�B��&�vR�CFW�B�6�f��B��VF�V�#�;��G&f�������6�74��S�'FW�B�w&��CFW�Bׇ2#�7F�f�W#�R6�F�W":RfV�C�����F�c��F�b6�74��S�'�2&�V�FVB��r&r�&VB�S�&�&FW"&�&FW"�&VB�S�##��6�74��S�'FW�B�&VB�CFW�B�6�f��B��VF�V�#�7�7FV�f'6V�����6�74��S�'FW�B�w&��CFW�Bׇ2#�4�2�F�V�W7FS�f�'fV�FWBf�'6��V�6S�����F�c���F�c���F�c���F�c���F�cࠢ����6F���W&f�&��6RF&�R��Т�F�b6�74��S�&�B�b&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b#�ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#�FV�6RW"���6������3��F�b6�74��S�&�fW&f��rׂ�WF�#��F&�R6�74��S�'r�gV��FW�B�6�#��F�VC��G"6�74��S�&&�&FW"�"&�&FW"�v��FR�#��F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#����6�����F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#��&���F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�&�����vW#��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#���fW'FW&��s��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�7f'&FS��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�7FGW3��F����G#���F�VC��F&�G�����6F���2������2��������G ��W�׶�Т6�74��S�&&�&FW"�"&�&FW"�v��FR�R��fW#�&r�v��FR�R7W'6�"����FW"G&�6�F����6���'2 ���6Ɩ6�ײ������6V�V7D��6F�����2�Т��FB6�74��S�'��2��"f��B��VF�V�FW�B�v��FR#���2���W���FC��FB6�74��S�'��2��"FW�B�w&��3#���2�6��7���FC��FB6�74��S�'��2��"FW�B�w&��3#���2�&�����w7���FC��FB6�74��S�'��2��"#��7�6�74��S׶6•wFW�B�6�r����2�&FR�C�wFW�B�V�W&�B�Cr���2�&FR�3b�wFW�B�&�VR�Cr�wFW�B��&�vR�Cp�������2�&FW�P���7���F�b6�74��S�'r�#���R&r�v��FR�&�V�FVB�gV���fW&f��rֆ�FFV���Ɩ�R�&��6����"Ɩv��֖FF�R#��F�`�6�74��S׶6•v��gV��&�V�FVB�gV��r����2�&FR�C�v&r�V�W&�B�Sr���2�&FR�3b�v&r�&�VR�Sr�v&r��&�vR�Sp��Т7G��S׷�v�GF��G���2�&FR�'�V�Т����F�c���FC��FB6�74��S�'��2��"FW�B�w&��3#���2��7vW'�S��FC��FB6�74��S�'��2��"#��7�6�74��S׶6•wFW�Bׇ2f��B�6V֖&��B��"�R��&�V�FVB��Br����2�7FGW2���vw&VV�r�v&r�V�W&�B�S�FW�B�V�W&�B�Cr�v&r��&�vR�S�FW�B��&�vR�Cp�������2�7FGW2���vw&VV�r�t�F�br�t�b���b�wТ��7����FC���G#���Т��F&�G����F&�S���F�c���F�c�������Р�����������������������tS�4�D�U"�������������������ЦgV�7F���6�F�W%vR����&WGW&������F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"�b#��F�c�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#�6�F�W#���#��6�74��S�'FW�B�w&��CFW�B�6�#���R��6�F�W"�VBG&�6�&�C�����F�c���F�cࠢ����&V6V�B6��2��Т�F�b6�74��S�&w&�Bw&�B�6��2��C�w&�B�6��2�"v�B�"ӂ#��&V6V�D6��2����6����������F�b�W�׶��6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��B��fW#�&r�v��FR���u�G&�6�F����6���'27W'6�"����FW"#��F�b6�74��S�&f�W��FV�2�7F'Bv�2#��F�b6�74��S׶6•wrӒ�Ӓ&�V�FVB��rf�W��FV�2�6V�FW"�W7F�g��6V�FW"FW�B�&6Rf�W��6�&���r��6���G�R���v&���VBr�v&r�V�W&�B�S�r��6���G�R���v��f�r�v&r�&�VR�S�r�v&r��&�vR�S�p�����6���6��Т��F�c��F�b6�74��S�&f�W��֖��r�#��F�b6�74��S�&f�W��W7F�g��&WGvVV��FV�2�6V�FW"#��7�6�74��S�'FW�B�v��FRf��B�6V֖&��BFW�B�6�#�6�����W���7���7�6�74��S�'FW�B�w&��SFW�Bׇ2#�6���F��W���7����F�c��6�74��S�'FW�B�w&��CFW�Bׇ2�B�#�6�����7�(	B�6���FW67�����F�b6�74��S�&f�W�v�"�B�"#��7�6�74��S�'FW�Bׇ2��"���R&�V�FVB&r�v��FR�RFW�B�w&��C&�&FW"&�&FW"�v��FR�#�6���GW'���7���7�6�74��S׶6•wFW�Bׇ2��"���R&�V�FVBr��6���G�R���v&���VBr�v&r�V�W&�B�S�FW�B�V�W&�B�Cr��6���G�R���v��f�r�v&r�&�VR�S�FW�B�&�VR�Cr�v&r��&�vR�S�FW�B��&�vR�Cp�����6���G�R���v&���VBr�t&���WBr�6���G�R���v��f�r�t��f�r�t�fW&l;�'BwТ��7����F�c���F�c���F�c���F�c���Т��F�cࠢ��G&�67&�G2��Тƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#�G&�6�&�6���W#���3��F�b6�74��S�'76Rג�B#��G&�67&�G2����B��������F�b�W�׶��6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��R#��F�b6�74��S�&f�W��W7F�g��&WGvVV��FV�2�6V�FW"�"�2#��7�6�74��S�'FW�B�v��FRf��B�6V֖&��B#�B�6��W'�(	B�B���7���7���7�6�74��S�'FW�B�w&��SFW�B�6�#�B�GW'���7����F�c��F�b6�74��S�'76Rג�"#��B�Ɩ�W2����Ɩ�R��������F�b�W�׶��6�74��S׶6•wFW�B�6���2&�&FW"���"r��Ɩ�R�v�����v�r�v&�&FW"�&�VR�SFW�B�&�VR�3r�v&�&FW"�w&��cFW�B�w&��3p�����7�6�74��S�'FW�Bׇ2FW�B�w&��S�"�"#�Ɩ�R�v�����v�r�	�Ib�r�	�B�V�FRw���7���Ɩ�R�FW�GТ��F�c���Т��F�c��F�b6�74��S�&f�W�v�"�B�2#��7�6�74��S׶6•wFW�Bׇ2��"���R&�V�FVBr��B�G�R���v&�����rr�v&r�V�W&�B�S�FW�B�V�W&�B�Cr�v&r�&�VR�S�FW�B�&�VR�Cp�����B�G�R���v&�����rr�	�8R&�����rr�~(K������f�wТ��7���7�6�74��S�'FW�Bׇ2��"���R&�V�FVB&r�v��FR�RFW�B�w&��C#�B���7���7����F�c���F�c���Т��F�c�������Р�����������������������tS�$�����tU"�������������������ЦgV�7F���&�����vW%vR����&WGW&������F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"�b#��F�c�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#�&�����vW"�Fs���#��6�74��S�'FW�B�w&��CFW�B�6�#�"&�����vW"(	Bg&VFr#���'3�����F�c���F�cࠢ�F�b6�74��S�'76Rג�2#��&�����w2����"��������F�b�W�׶��6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��Bf�W��FV�2�6V�FW"�W7F�g��&WGvVV���fW#�&r�v��FR���u�G&�6�F����6���'27W'6�"����FW"#��F�b6�74��S�&f�W��FV�2�6V�FW"v�B#��7�6�74��S�'FW�B�&�VR�Cf��B�&��BFW�B�6�֖��rճS��#�"�F��W���7���F�c��6�74��S�'FW�B�v��FRf��B�6V֖&��BFW�B�6�#�"���W�����6�74��S�'FW�B�w&��CFW�Bׇ2#�"�6W'f�6W������F�c���F�c��7�6�74��S�'FW�B�w&��CFW�Bׇ2#�	�8��"���7���7����F�c���Т��F�c�������Р�����������������������tS����4���U"�������������������ЦgV�7F������6���W%vR����6V�V7D��6F���Ӣ���6V�V7D��6F������3���6F�����f��BҒ��&WGW&������F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"�b#��F�c�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#����6���W#���#��6�74��S�'FW�B�w&��CFW�B�6�#���R���6F���2��V�wF���F�fR���6���W#�����F�c���F�cࠢ��7V��'�6&G2��Т�F�b6�74��S�&w&�Bw&�B�6��2��C�w&�B�6��2�2v�B�"�b#��7FD6&BF�F�S�$�F�fR���6���W""f�VS׶��6F���2��V�wF���6��״����6���#�&V�W&�B"���7FD6&BF�F�S�$v�V����6�GFƖr7f'&FR"f�VS�#�r�2R"�6��״7F�f�G��6���#�&&�VR"���7FD6&BF�F�S�$&W7FR���6���"f�VS�$Ɩ��W7G,;��"7V'F�F�S�#Cr�2R���fW'FW&��r"�6��׵G&V�F��uW�6���#�'W'�R"����F�cࠢ��gV����6F���F&�R��Т�F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b#�ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#���R���6���W#���3��F�b6�74��S�&�fW&f��rׂ�WF�#��F&�R6�74��S�'r�gV��FW�B�6�#��F�VC��G"6�74��S�&&�&FW"�"&�&FW"�v��FR�#��F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#����6�����F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�G&W76S��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#��&��Fs��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�7f'&FS��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�7FGW3��F����G#���F�VC��F&�G�����6F���2������2��������G ��W�׶�Т6�74��S�&&�&FW"�"&�&FW"�v��FR�R��fW#�&r�v��FR�R7W'6�"����FW"G&�6�F����6���'2 ���6Ɩ6�ײ������6V�V7D��6F�����2�Т��FB6�74��S�'��2��"f��B��VF�V�FW�B�v��FR#���2���W���FC��FB6�74��S�'��2��"FW�B�w&��C#���2�FG'���FC��FB6�74��S�'��2��"FW�B�w&��3#��F��&�V�B���2�6��2�r����FC��FB6�74��S�'��2��"FW�B�w&��3#���2��7vW'�S��FC��FB6�74��S�'��2��"#��7�6�74��S׶6•wFW�Bׇ2f��B�6V֖&��B��"�R��&�V�FVB��Br����2�7FGW2���vw&VV�r�v&r�V�W&�B�S�FW�B�V�W&�B�Cr�v&r��&�vR�S�FW�B��&�vR�Cp�������2�7FGW2���vw&VV�r�t�F�br�t�b���b�wТ��7����FC���G#���Т��F&�G����F&�S���F�c���F�c�������Р�����������������������tS��T�DU"�������������������ЦgV�7F����V�FW%vR����6��7B�6V&6��6WE6V&6���W6U7FFR�rr���6��7Bf��FW&VB�6V&6���7W7F��W'2�f��FW"�2��2���R�F���vW$66R����6�VFW2�6V&6��F���vW$66R�����2���2�F���vW$66R����6�VFW2�6V&6��F���vW$66R������7W7F��W'3���&WGW&������F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"�b#��F�c�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#�V�FW#���#��6�74��S�'FW�B�w&��CFW�B�6�#�V�FV&6Rg&��6�F�W"(	B�Cr&Vv�7G&W'FS�����F�c�Ɩ�W@�G�S�'FW�B ��6V���FW#�%<;���V�FR��� �f�VS׷6V&6�Т��6��vSײ�R���6WE6V&6��R�F&vWB�f�VR�Т6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�FW�B�v��FR��B��"&�V�FVB��rFW�B�6��WFƖ�R����Rf�7W3�&�&FW"�&�VR�S�SG&�6�F����6���'2 �����F�cࠢ��7V��'���Т�F�b6�74��S�&w&�Bw&�B�6��2��C�w&�B�6��2�Bv�B�"�b#��7FD6&BF�F�S�%F�F�B&Vv�7G&W'FR"f�VS�#�Cr"�6��׵W6W'7�6���#�&&�VR"���7FD6&BF�F�S�$�RFV��RV�V�"f�VS�#c""�6��׵G&V�F��uW�6���#�&V�W&�B"���7FD6&BF�F�S�$v�V�v�vW&R"f�VS�#3BR"�6��״7F�f�G��6���#�'W'�R"���7FD6&BF�F�S�%6�GB&�����vW""f�VS�#"�B"�6��״6�V�F'�6���#�&�&�vR"����F�cࠢ��7W7F��W"F&�R��Т�F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b#�ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#�6�7FR&Vv�7G&W'FR�V�FW"�7�6�74��S�&f��B���&��FW�Bׇ2FW�B�w&��S#�(	Bf�6W"�f��FW&VB��V�wF���W7FS��7�����3��F�b6�74��S�&�fW&f��rׂ�WF�#��F&�R6�74��S�'r�gV��FW�B�6�#��F�VC��G"6�74��S�&&�&FW"�"&�&FW"�v��FR�#��F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#��f���F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�FV�Vf����F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#����6�����F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�f�&WG'V��WBF�V�W7FS��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�6�7FR���F�C��F���F�6�74��S�'FW�B��VgB��2��"FW�B�w&��Cf��B�6V֖&��BFW�Bׇ2WW&66R#�&�����vW#��F����G#���F�VC��F&�G���f��FW&VB����2��������G"�W�׶��6�74��S�&&�&FW"�"&�&FW"�v��FR�R��fW#�&r�v��FR�R7W'6�"����FW"G&�6�F����6���'2#��FB6�74��S�'��2��"f��B��VF�V�FW�B�v��FR#�2���W���FC��FB6�74��S�'��2��"FW�B�w&��C#�2����W���FC��FB6�74��S�'��2��"FW�B�w&��3#�2���7���FC��FB6�74��S�'��2��"FW�B�w&��3#�2�6W'f�6W���FC��FB6�74��S�'��2��"FW�B�w&��C#�2��7G���FC��FB6�74��S�'��2��"#��7�6�74��S�&&r�&�VR�S�FW�B�&�VR�C��"�R��&�V�FVB��BFW�Bׇ2f��B�&��B#�2�6�V�G���7����FC���G#���Т��F&�G����F&�S���F�c���F�c�������Р�����������������������tS�$�%DU"�������������������ЦgV�7F���&�'FW%vR����&WGW&������F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"�b#��F�c�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#�&�'FW#���#��6�74��S�'FW�B�w&��CFW�B�6�#�V�V�FƖvR�r�:V�VFƖvR&�'FW#�����F�c���F�cࠢ�F�b6�74��S�'76Rג�2#��&W�'G2����"��������F�b�W�׶��6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��Rf�W��FV�2�6V�FW"�W7F�g��&WGvVV���fW#�&r�v��FR���u�G&�6�F����6���'27W'6�"����FW"w&�W#��F�b6�74��S�&f�W��FV�2�6V�FW"v�B#��F�b6�74��S׶6•wr���&�V�FVB��rf�W��FV�2�6V�FW"�W7F�g��6V�FW"FW�B��rr��"�G�R���wvVV�ǒr�v&r�&�VR�S�r�v&r�W'�R�S�p�����"�G�R���wvVV�ǒr�	�8�r�	�8�wТ��F�c��F�c��6�74��S�'FW�B�v��FRf��B�6V֖&��BFW�B�6�#�"�F�F�W�����6�74��S�'FW�B�w&��SFW�Bׇ2�B��R#�"�FFW�(	B�"�7V��'��7V'7G&��r��c����������F�c���F�c��F�b6�74��S�&f�W��FV�2�6V�FW"v�2#��7�6�74��S׶6•wFW�Bׇ2f��B�6V֖&��B��"�R��&�V�FVB��Br��"�7FGW2���v�Wrr�v&r�V�W&�B�S�FW�B�V�W&�B�Cr�v&r�v��FR�RFW�B�w&��Sp�����"�7FGW2���v�Wrr�t�r�t�W7BwТ��7���6�Wg&��&�v�B6�74��S�'r�B��BFW�B�w&��cw&�Wֆ�fW#�FW�B�w&��CG&�6�F����6���'2"����F�c���F�c���Т��F�c�������Р�����������������������tS����5D��Ĕ�tU"�������������������ЦgV�7F���F�vv�U7v�F6���FVfV�D���G'VR���F�vv�RӢ�FVfV�D���&���V���F�vv�S����&���V���f��BҒ��6��7B����6WD����W6U7FFR�FVfV�D�⓰�&WGW&����F�`�6�74��S׶6•wr���b&�V�FVB�gV��&V�F�fR7W'6�"����FW"G&�6�F������f�W��6�&���r�����v&r�&�VR�Sr�v&r�w&��sp��Т��6Ɩ6�ײ�����6WD���⓲��F�vv�S���⓲�Т��F�b6�74��S׶6•wr�B��B&r�v��FR&�V�FVB�gV��'6��WFRF��G&�6�F������6�F�rr�����v�VgB�br�v�VgB�p�������F�c����Р�gV�7F������7F��Ɩ�vW%vR����&WGW&������F�b6�74��S�&�"�b#�ƃ"6�74��S�'FW�B�'��f��B�&��BFW�B�v��FR#���7F��Ɩ�vW#���#��6�74��S�'FW�B�w&��CFW�B�6�#���f�wW&W"��76�7FV�FV������F�cࠢ�F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b�"�B#�ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#���76�7FV�C���3��F�b6�74��S�'76Rג�#������&Vât��F�br����C�u6�:Rbf�":R7F�R��7f"֖F�W'F�F�rr�����&VâtWF��F�6�&�����rr����C�uF���B�:R&���RF��W"WFV�&V�&VgFV�6Rr�����&Vâu4�2�&V�&VgFV�6Rr����C�u6V�B4�2F���V�FRWGFW"&�����rr�����&Vât�6GGf'6V�r����C�uf'6�R�6GFR���R&�����vW"r�����&Vât�fW&l;�&��rF���6GBr����C�uF���B�:R6WGFR�fW"F��WB�V��W6�Rr��������2��������F�b�W�׶��6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV���B&�&FW"�"&�&FW"�v��FR�R�7C�&�&FW"�#��F�c��6�74��S�'FW�B�v��FRFW�B�6�#�2��&V������6�74��S�'FW�B�w&��SFW�Bׇ2�B��R#�2憖�G������F�c��F�vv�U7v�F6�����F�c���Т��F�c���F�cࠢ�F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB׆��b#�ƃ26�74��S�'FW�B�v��FRf��B�6V֖&��B�"�B#�f'6�W#���3��F�b6�74��S�'76Rג�#������&VâtR��7Gf'6�W"r����C�tFvƖr�7V��W&��rF������G������r�����&VâuV�V�FƖr&�'Br����C�tWF��F�6�&�'B�fW"��Fr����r��������2��������F�b�W�׶��6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV���B&�&FW"�"&�&FW"�v��FR�R�7C�&�&FW"�#��F�c��6�74��S�'FW�B�v��FRFW�B�6�#�2��&V������6�74��S�'FW�B�w&��SFW�Bׇ2�B��R#�2憖�G������F�c��F�vv�U7v�F6�����F�c���Т��F�c���F�c�������Р�����������������������DUD���T��������������������ЦgV�7F���FWF���V�6��FV�B���6��6RӢ�6��FV�C�&V7B�&V7D��FR��V�ò��6��6S�����f��BҒ��&WGW&����F�b6�74��S׶6�vFWF����V�r�6��FV�B�v�V�r�rr����'WGF����6Ɩ6�׶��6��6WТ6�74��S�&'6��WFRF��B&�v�B�BFW�B�w&��C��fW#�FW�B�v��FRG&�6�F����6���'2�&�V�FVB ��ł6�74��S�'r�R��R"����'WGF����6��FV�GТ��F�c����Р��������������������������D4�$�$B�������������������ЦW��'BFVfV�BgV�7F�����G���F6�&�&B����6��7B�7F�fUvR�6WD7F�fUvU��W6U7FFR�v�fW'6��Br���6��7B�FWF��6��FV�B�6WDFWF��6��FV�E��W6U7FFS�&V7B�&V7D��FR��V����V����gV�7F���6��t��6F���FWF���3���6F�����6��7B��46��2�&V6V�D6��2�f��FW"�2��2���2�����2���R���6WDFWF��6��FV�B���F�c�ƃ"6�74��S�'FW�B׆�f��B�&��BFW�B�v��FR#���2���W����#��6�74��S�'FW�B�w&��CFW�B�6��"�b#�	�8����2�FG'�����F�b6�74��S�&w&�Bw&�B�6��2�"v�2�"�b#��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#��&�����6�74��S�'FW�B�&�VR�CFW�B׆�f��B�&��B#���2�6��7������F�c��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#�&�����vW#����6�74��S�'FW�B�V�W&�B�CFW�B׆�f��B�&��B#���2�&�����w7������F�c��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#���fW'FW&��s����6�74��S�'FW�B�v��FRFW�B׆�f��B�&��B#���2�&FW�S�����F�c��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#�7f'&FS����6�74��S�'FW�B�v��FRFW�B׆�f��B�&��B#���2��7vW'�S�����F�c���F�c�ƃB6�74��S�'FW�B�w&��CFW�Bׇ2f��B�6V֖&��BWW&66R�"�2#�6�7FR6�F�W"�W&g&���C����46��2��V�wF�����46��2����2��������F�b�W�׶��6�74��S�&f�W��FV�2�6V�FW"v�"�"&�V�FVB&r�v��FR�R�"�"FW�B�6�#��F�b6�74��S׶6•wr��R���R&�V�FVB�gV��f�W��6�&���r��2�G�R���v&���VBr�v&r�V�W&�B�Sr�2�G�R���v��f�r�v&r�&�VR�Sr�v&r��&�vR�Sp������7�6�74��S�'FW�B�v��FR#�2���W���7���7�6�74��S�'FW�B�w&��S���WF�FW�Bׇ2#�2�F��W���7����F�c�������6�74��S�'FW�B�w&��SFW�B�6�#��vV�6�F�W"��W&B�:S����Т��F�c����Р�gV�7F���6��t6��FWF�6�â&V6V�D6���6��7BB�G&�67&�G2�f��B������6��W"���6�����R���6WDFWF��6��FV�B���F�c�ƃ"6�74��S�'FW�B׆�f��B�&��BFW�B�v��FR#�6�����W����#��6�74��S�'FW�B�w&��CFW�B�6��"�b#�	�8��6�����7�(	B�6���F��W�(	B�6���GW'�����F�b6�74��S�&w&�Bw&�B�6��2�"v�2�"�b#��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#�G�S����6�74��S׶6�wFW�B��rf��B�&��Br��6���G�R���v&���VBr�wFW�B�V�W&�B�Cr�6���G�R���v��f�r�wFW�B�&�VR�Cr�wFW�B��&�vR�Cp�����6���G�R���v&���VBr�t&�����rr�6���G�R���v��f�r�t��f�r�t�fW&l;�'BwТ�����F�c��F�b6�74��S�&&r�v��FR�R&�&FW"&�&FW"�v��FR�&�V�FVB��r�2#��6�74��S�'FW�B�w&��SFW�Bׇ2#�f&�v�WC����6�74��S�'FW�B�v��FRFW�B��rf��B�&��B#�6���GW'������F�c���F�c��Bbb����ƃB6�74��S�'FW�B�w&��CFW�Bׇ2f��B�6V֖&��BWW&66R�"�2#�G&�6�&�6������C��F�b6�74��S�'76Rג�"#��B�Ɩ�W2����Ɩ�R��������F�b�W�׶��6�74��S׶6•wFW�B�6��"&�V�FVB&r�v��FR�R&�&FW"���"r��Ɩ�R�v�����v�r�v&�&FW"�&�VR�Sr�v&�&FW"�w&��cp�����7�6�74��S׶6�wFW�Bׇ2f��B�6V֖&��Br�Ɩ�R�v�����v�r�wFW�B�&�VR�Cr�wFW�B�w&��Cr����Ɩ�R�v�����v�r�	�Ib�r�	�B�V�FRwТ��7���6�74��S�'FW�B�w&��3�B�#�Ɩ�R�FW�G������F�c���Т��F�c�����Т��F�c����Р�&WGW&����F�b6�74��S�&֖�ւ�67&VV�&r�&�6�FW�B�v��FR#���f&"�ࠢ�F�b6�74��S�&f�W�#���6�FV&"��Т�6�FR6�74��S�&��FFV��s�f�W�r�Sbf�W��6��v��B&�&FW"�"&�&FW"�v��FR�֖�ւն6�2�f��cG���&r�&�6��S#��6�74��S�'FW�B�w&��cFW�Bׇ2f��B�6V֖&��BWW&66RG&6���r�v�FW"��2�"�"#��fVF�V�����vW2�6Ɩ6R��B�����vR�����6��7B�6���vR�6�㰢&WGW&����'WGF���W�׷vR�GТ��6Ɩ6�ײ�����6WD7F�fUvR�vR�B��6WDFWF��6��FV�B��V���Т6�74��S׶6•vf�W��FV�2�6V�FW"v�2��2��"�R&�V�FVB��rFW�B�6�f��B��VF�V�G&�6�F������FW�B��VgBr�gV��r��7F�fUvR���vR�@��v&r�&�VR�S�#FW�B�&�VR�C&�&FW"&�&FW"�&�VR�S�3p��wFW�B�w&��C��fW#�FW�B�v��FR��fW#�&r�v��FR�Rp��Т�Ė6��6�74��S�'r�B��B"���7��vR���W���7���vR�&FvRbb���7�6�74��S�&���WF�&r�&�VR�S�#FW�B�&�VR�CFW�Bׇ2���R���R&�V�FVB�gV��f��B�&��B#�vR�&FvW���7���Т��'WGF������җР��F�b6�74��S�&���&r�v��FR�ג�""���6�74��S�'FW�B�w&��cFW�Bׇ2f��B�6V֖&��BWW&66RG&6���r�v�FW"��2�"�"#�fW&�L;������vW2�6Ɩ6R�B�����vR�����6��7B�6���vR�6�㰢&WGW&����'WGF���W�׷vR�GТ��6Ɩ6�ײ�����6WD7F�fUvR�vR�B��6WDFWF��6��FV�B��V���Т6�74��S׶6•vf�W��FV�2�6V�FW"v�2��2��"�R&�V�FVB��rFW�B�6�f��B��VF�V�G&�6�F������FW�B��VgBr�gV��r��7F�fUvR���vR�@��v&r�&�VR�S�#FW�B�&�VR�C&�&FW"&�&FW"�&�VR�S�3p��wFW�B�w&��C��fW#�FW�B�v��FR��fW#�&r�v��FR�Rp��Т�Ė6��6�74��S�'r�B��B"���7��vR���W���7����'WGF������җТ��6�FSࠢ�����6��FV�B��Т����6�74��S�&f�W���b�fW&f��rג�WF���ւն6�2�f��cG���#��F�b6�74��S�&���r�w��ׂ�WF�#���vR�VFW"��Т�7F�fUvR���v�fW'6��Brbb���F�b6�74��S�&f�W��FV�2�6V�FW"�W7F�g��&WGvVV��"ӂ#��F�c�ƃ6�74��S�'FW�B�7��f��B�&��B#��G���F6�&�&C�����6�74��S�'FW�B�w&��C�B�#���FV�Vf��7f&W"�fW'6��B(	B��R���6F���2��V�wF�����6���W#�����F�c��F�b6�74��S�&f�W��FV�2�6V�FW"v�B#��ƗfTFV��'WGF�����F�b6�74��S�&f�W��FV�2�6V�FW"v�"��B��"&r�V�W&�B�S�&�&FW"&�&FW"�V�W&�B�S�#&�V�FVB�gV��#��F�b6�74��S�'r�"��"&�V�FVB�gV��&r�V�W&�B�SƗfR�F�B"���7�6�74��S�'FW�B�V�W&�B�CFW�B�6�#�7�7FV��F�c��7����F�c��F�b6�74��S�'FW�B�&�v�B#��6�74��S�'FW�B�w&��CFW�Bׇ2#�6�7B�FFW'C����6�74��S�'FW�B�v��FRFW�B�6�#��WrFFR���F���6�UF��U7G&��r�v�����r�������F�c���F�c���F�c��Р���&V�FW"7F�fRvR��Т�7F�fUvR���v�fW'6��Brbb��fW'6��EvR��6V�V7D��6F���׷6��t��6F���FWF�����6V�V7D6��׷6��t6��FWF�����Т�7F�fUvR���w6�F�W"rbb�6�F�W%vR��Т�7F�fUvR���v&�����vW"rbb�&�����vW%vR��Т�7F�fUvR���v���6���W"rbb����6���W%vR��6V�V7D��6F���׷6��t��6F���FWF�����Т�7F�fUvR���v�V�FW"rbbķV�FW%vR��Т�7F�fUvR���w&�'FW"rbb�&�'FW%vR��Т�7F�fUvR���v���7F��Ɩ�vW"rbbĖ��7F��Ɩ�vW%vR��Т��F�c���������F�cࠢ��FWF���V���Т�FWF���V�6��FV�C׶FWF��6��FV�G���6��6Sײ����6WDFWF��6��FV�B��V������F�c�����
+                <p className="text-gray-400 text-sm">Overført til menneske</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        <div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <AlertCircle className="w-5 h-5 text-orange-400" />
+              <h3 className="text-white font-semibold">Varsler</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                <p className="text-orange-400 text-sm font-medium">Høy trafikk</p>
+                <p className="text-gray-400 text-xs">Stovner: 5 samtaler på vent</p>
+              </div>
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <p className="text-red-400 text-sm font-medium">Systemvarsel</p>
+                <p className="text-gray-400 text-xs">SMS-tjeneste: Forventet forsinkelse</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Location Performance Table */}
+      <div className="mt-6 bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-white font-semibold mb-4">Ytelse per lokasjon</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Lokasjon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Anrop</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Bookinger</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Konvertering</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Svarrate</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {locations.map((loc, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
+                  onClick={() => onSelectLocation(loc)}
+                >
+                  <td className="py-3 px-2 font-medium text-white">{loc.name}</td>
+                  <td className="py-3 px-2 text-gray-300">{loc.calls}</td>
+                  <td className="py-3 px-2 text-gray-300">{loc.bookings}</td>
+                  <td className="py-3 px-2">
+                    <span className={cn(
+                      'text-sm',
+                      loc.rate > 40 ? 'text-emerald-400' : loc.rate > 36 ? 'text-blue-400' : 'text-orange-400'
+                    )}>
+                      {loc.rate}%
+                    </span>
+                    <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden inline-block ml-2 align-middle">
+                      <div
+                        className={cn(
+                          'h-full rounded-full',
+                          loc.rate > 40 ? 'bg-emerald-500' : loc.rate > 36 ? 'bg-blue-500' : 'bg-orange-500'
+                        )}
+                        style={{ width: `${loc.rate * 2}%` }}
+                      />
+                    </div>
+                  </td>
+                  <td className="py-3 px-2 text-gray-300">{loc.answer}%</td>
+                  <td className="py-3 px-2">
+                    <span className={cn(
+                      'text-xs font-semibold px-2.5 py-1 rounded-md',
+                      loc.status === 'green' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-orange-500/10 text-orange-400'
+                    )}>
+                      {loc.status === 'green' ? 'Aktiv' : 'Lav konv.'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: SAMTALER ====================
+function SamtalerPage() {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Samtaler</h2>
+          <p className="text-gray-400 text-sm">Alle AI-samtaler med transkript</p>
+        </div>
+      </div>
+
+      {/* All recent calls */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        {recentCalls.map((call, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/[0.07] transition-colors cursor-pointer">
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                'w-9 h-9 rounded-lg flex items-center justify-center text-base flex-shrink-0',
+                call.type === 'booked' ? 'bg-emerald-500/10' :
+                call.type === 'info' ? 'bg-blue-500/10' : 'bg-orange-500/10'
+              )}>
+                {call.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center">
+                  <span className="text-white font-semibold text-sm">{call.name}</span>
+                  <span className="text-gray-500 text-xs">{call.time}</span>
+                </div>
+                <p className="text-gray-400 text-xs mt-1">{call.loc} — {call.desc}</p>
+                <div className="flex gap-2 mt-2">
+                  <span className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10">{call.dur}</span>
+                  <span className={cn(
+                    'text-xs px-2 py-0.5 rounded',
+                    call.type === 'booked' ? 'bg-emerald-500/10 text-emerald-400' :
+                    call.type === 'info' ? 'bg-blue-500/10 text-blue-400' : 'bg-orange-500/10 text-orange-400'
+                  )}>
+                    {call.type === 'booked' ? 'Booket' : call.type === 'info' ? 'Info' : 'Overført'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Transcripts */}
+      <h3 className="text-white font-semibold mb-4">Transkripsjoner</h3>
+      <div className="space-y-4">
+        {transcripts.map((t, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-5">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-white font-semibold">{t.caller} — {t.loc}</span>
+              <span className="text-gray-500 text-sm">{t.dur}</span>
+            </div>
+            <div className="space-y-2">
+              {t.lines.map((line, j) => (
+                <div key={j} className={cn(
+                  'text-sm pl-3 border-l-2',
+                  line.who === 'ai' ? 'border-blue-500 text-blue-300' : 'border-gray-600 text-gray-300'
+                )}>
+                  <span className="text-xs text-gray-500 mr-2">{line.who === 'ai' ? '🤖 AI' : '👤 Kunde'}</span>
+                  {line.text}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2 mt-3">
+              <span className={cn(
+                'text-xs px-2 py-0.5 rounded',
+                t.type === 'booking' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'
+              )}>
+                {t.type === 'booking' ? '📅 Booking' : 'ℹ️ Info'}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400">{t.loc}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: BOOKINGER ====================
+function BookingerPage() {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Bookinger i dag</h2>
+          <p className="text-gray-400 text-sm">12 bookinger — fredag 28. mars</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {bookings.map((b, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between hover:bg-white/[0.07] transition-colors cursor-pointer">
+            <div className="flex items-center gap-4">
+              <span className="text-blue-400 font-bold text-sm min-w-[50px]">{b.time}</span>
+              <div>
+                <p className="text-white font-semibold text-sm">{b.name}</p>
+                <p className="text-gray-400 text-xs">{b.service}</p>
+              </div>
+            </div>
+            <span className="text-gray-400 text-xs">📍 {b.loc}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: LOKASJONER ====================
+function LokasjonerPage({ onSelectLocation }: { onSelectLocation: (loc: Location) => void }) {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Lokasjoner</h2>
+          <p className="text-gray-400 text-sm">Alle {locations.length} aktive lokasjoner</p>
+        </div>
+      </div>
+
+      {/* Summary cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <StatCard title="Aktive lokasjoner" value={locations.length} icon={MapPin} color="emerald" />
+        <StatCard title="Gjennomsnittlig svarrate" value="97.3%" icon={Activity} color="blue" />
+        <StatCard title="Beste lokasjon" value="Lillestrøm" subtitle="47.3% konvertering" icon={TrendingUp} color="purple" />
+      </div>
+
+      {/* Full location table */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-white font-semibold mb-4">Alle lokasjoner</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Lokasjon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Adresse</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Anrop/dag</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Svarrate</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {locations.map((loc, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
+                  onClick={() => onSelectLocation(loc)}
+                >
+                  <td className="py-3 px-2 font-medium text-white">{loc.name}</td>
+                  <td className="py-3 px-2 text-gray-400">{loc.addr}</td>
+                  <td className="py-3 px-2 text-gray-300">{Math.round(loc.calls / 7)}</td>
+                  <td className="py-3 px-2 text-gray-300">{loc.answer}%</td>
+                  <td className="py-3 px-2">
+                    <span className={cn(
+                      'text-xs font-semibold px-2.5 py-1 rounded-md',
+                      loc.status === 'green' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-orange-500/10 text-orange-400'
+                    )}>
+                      {loc.status === 'green' ? 'Aktiv' : 'Lav konv.'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: KUNDER ====================
+function KunderPage() {
+  const [search, setSearch] = useState('');
+  const filtered = search
+    ? customers.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.loc.toLowerCase().includes(search.toLowerCase()))
+    : customers;
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Kunder</h2>
+          <p className="text-gray-400 text-sm">Kundebase fra AI-samtaler — 847 registrerte</p>
+        </div>
+        <input
+          type="text"
+          placeholder="Søk kunde..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg text-sm outline-none focus:border-blue-500/50 transition-colors"
+        />
+      </div>
+
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <StatCard title="Totalt registrerte" value="847" icon={Users} color="blue" />
+        <StatCard title="Nye denne uken" value="62" icon={TrendingUp} color="emerald" />
+        <StatCard title="Gjengangere" value="34%" icon={Activity} color="purple" />
+        <StatCard title="Snitt bookinger" value="2.4" icon={Calendar} color="orange" />
+      </div>
+
+      {/* Customer table */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-white font-semibold mb-4">Siste registrerte kunder <span className="font-normal text-xs text-gray-500">— viser {filtered.length} nyeste</span></h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Navn</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Telefon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Lokasjon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Foretrukket tjeneste</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Siste kontakt</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Bookinger</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => (
+                <tr key={i} className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors">
+                  <td className="py-3 px-2 font-medium text-white">{c.name}</td>
+                  <td className="py-3 px-2 text-gray-400">{c.phone}</td>
+                  <td className="py-3 px-2 text-gray-300">{c.loc}</td>
+                  <td className="py-3 px-2 text-gray-300">{c.service}</td>
+                  <td className="py-3 px-2 text-gray-400">{c.last}</td>
+                  <td className="py-3 px-2">
+                    <span className="bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-md text-xs font-bold">{c.count}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: RAPPORTER ====================
+function RapporterPage() {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Rapporter</h2>
+          <p className="text-gray-400 text-sm">Ukentlige og månedlige rapporter</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {reports.map((r, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center justify-between hover:bg-white/[0.07] transition-colors cursor-pointer group">
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                'w-10 h-10 rounded-lg flex items-center justify-center text-lg',
+                r.type === 'weekly' ? 'bg-blue-500/10' : 'bg-purple-500/10'
+              )}>
+                {r.type === 'weekly' ? '📋' : '📊'}
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">{r.title}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{r.date} — {r.summary.substring(0, 60)}...</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={cn(
+                'text-xs font-semibold px-2.5 py-1 rounded-md',
+                r.status === 'new' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-gray-500'
+              )}>
+                {r.status === 'new' ? 'Ny' : 'Lest'}
+              </span>
+              <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: INNSTILLINGER ====================
+function ToggleSwitch({ defaultOn = true, onToggle }: { defaultOn?: boolean; onToggle?: (on: boolean) => void }) {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <div
+      className={cn(
+        'w-11 h-6 rounded-full relative cursor-pointer transition-all flex-shrink-0',
+        on ? 'bg-blue-500' : 'bg-gray-700'
+      )}
+      onClick={() => { setOn(!on); onToggle?.(!on); }}
+    >
+      <div className={cn(
+        'w-4 h-4 bg-white rounded-full absolute top-1 transition-all shadow',
+        on ? 'left-6' : 'left-1'
+      )} />
+    </div>
+  );
+}
+
+function InnstillingerPage() {
+  return (
+    <>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-white">Innstillinger</h2>
+        <p className="text-gray-400 text-sm">Konfigurer AI-assistenten</p>
+      </div>
+
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-4">
+        <h3 className="text-white font-semibold mb-4">AI-assistent</h3>
+        <div className="space-y-0">
+          {[
+            { label: 'AI aktiv', hint: 'Slå av for å stappe AI-svar midlertidig' },
+            { label: 'Automatisk booking', hint: 'Tillat AI å booke timer uten bekreftelse' },
+            { label: 'SMS-bekreftelse', hint: 'Send SMS til kunde etter booking' },
+            { label: 'Ansattvarsel', hint: 'Varsle ansatte om nye bookinger' },
+            { label: 'Overføring til ansatt', hint: 'Tillat AI å sette over til et menneske' },
+          ].map((s, i) => (
+            <div key={i} className="flex items-center justify-between py-4 border-b border-white/5 last:border-0">
+              <div>
+                <p className="text-white text-sm">{s.label}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{s.hint}</p>
+              </div>
+              <ToggleSwitch />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-white font-semibold mb-4">Varsler</h3>
+        <div className="space-y-0">
+          {[
+            { label: 'E-postvarsler', hint: 'Daglig oppsummering til oh@handzon.no' },
+            { label: 'Ukentlig rapport', hint: 'Automatisk rapport hver mandag kl 08:00' },
+          ].map((s, i) => (
+            <div key={i} className="flex items-center justify-between py-4 border-b border-white/5 last:border-0">
+              <div>
+                <p className="text-white text-sm">{s.label}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{s.hint}</p>
+              </div>
+              <ToggleSwitch />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== DETAIL PANEL ====================
+function DetailPanel({ content, onClose }: { content: React.ReactNode | null; onClose: () => void }) {
+  return (
+    <div className={cn('detail-panel', content ? 'open' : '')}>
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-1 rounded"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      {content}
+    </div>
+  );
+}
+
+// ==================== MAIN DASHBOARD ====================
+export default function HandzOnDashboard() {
+  const [activePage, setActivePage] = useState('oversikt');
+  const [detailContent, setDetailContent] = useState<React.ReactNode | null>(null);
+
+  function showLocationDetail(loc: Location) {
+    const locCalls = recentCalls.filter(c => c.loc === loc.name);
+    setDetailContent(
+      <div>
+        <h2 className="text-xl font-bold text-white">{loc.name}</h2>
+        <p className="text-gray-400 text-sm mb-6">📍 {loc.addr}</p>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Anrop</p>
+            <p className="text-blue-400 text-xl font-bold">{loc.calls}</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Bookinger</p>
+            <p className="text-emerald-400 text-xl font-bold">{loc.bookings}</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Konvertering</p>
+            <p className="text-white text-xl font-bold">{loc.rate}%</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Svarrate</p>
+            <p className="text-white text-xl font-bold">{loc.answer}%</p>
+          </div>
+        </div>
+        <h4 className="text-gray-400 text-xs font-semibold uppercase mb-3">Siste samtaler herfra</h4>
+        {locCalls.length > 0 ? locCalls.map((c, i) => (
+          <div key={i} className="flex items-center gap-2 p-2 rounded bg-white/5 mb-2 text-sm">
+            <div className={cn(
+              'w-1.5 h-1.5 rounded-full flex-shrink-0',
+              c.type === 'booked' ? 'bg-emerald-500' : c.type === 'info' ? 'bg-blue-500' : 'bg-orange-500'
+            )} />
+            <span className="text-white">{c.name}</span>
+            <span className="text-gray-500 ml-auto text-xs">{c.time}</span>
+          </div>
+        )) : (
+          <p className="text-gray-500 text-sm">Ingen samtaler akkurat nå</p>
+        )}
+      </div>
+    );
+  }
+
+  function showCallDetail(call: RecentCall) {
+    const t = transcripts.find(x => x.caller === call.name);
+    setDetailContent(
+      <div>
+        <h2 className="text-xl font-bold text-white">{call.name}</h2>
+        <p className="text-gray-400 text-sm mb-6">📍 {call.loc} — {call.time} — {call.dur}</p>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Type</p>
+            <p className={cn('text-lg font-bold',
+              call.type === 'booked' ? 'text-emerald-400' : call.type === 'info' ? 'text-blue-400' : 'text-orange-400'
+            )}>
+              {call.type === 'booked' ? 'Booking' : call.type === 'info' ? 'Info' : 'Overført'}
+            </p>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+            <p className="text-gray-500 text-xs">Varighet</p>
+            <p className="text-white text-lg font-bold">{call.dur}</p>
+          </div>
+        </div>
+        {t && (
+          <>
+            <h4 className="text-gray-400 text-xs font-semibold uppercase mb-3">Transkripsjon</h4>
+            <div className="space-y-2">
+              {t.lines.map((line, j) => (
+                <div key={j} className={cn(
+                  'text-sm p-2 rounded bg-white/5 border-l-2',
+                  line.who === 'ai' ? 'border-blue-500' : 'border-gray-600'
+                )}>
+                  <span className={cn('text-xs font-semibold', line.who === 'ai' ? 'text-blue-400' : 'text-gray-400')}>
+                    {line.who === 'ai' ? '🤖 AI' : '👤 Kunde'}
+                  </span>
+                  <p className="text-gray-300 mt-1">{line.text}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <Navbar />
+
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex w-56 flex-col gap-1 p-4 border-r border-white/10 min-h-[calc(100vh-64px)] bg-black/50">
+          <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Hovedmeny</p>
+          {pages.slice(0, 4).map((page) => {
+            const Icon = page.icon;
+            return (
+              <button
+                key={page.id}
+                onClick={() => { setActivePage(page.id); setDetailContent(null); }}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full',
+                  activePage === page.id
+                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{page.name}</span>
+                {page.badge && (
+                  <span className="ml-auto bg-blue-500/20 text-blue-400 text-xs px-1.5 py-0.5 rounded-full font-bold">{page.badge}</span>
+                )}
+              </button>
+            );
+          })}
+
+          <div className="h-px bg-white/10 my-2" />
+          <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Verktøy</p>
+          {pages.slice(4).map((page) => {
+            const Icon = page.icon;
+            return (
+              <button
+                key={page.id}
+                onClick={() => { setActivePage(page.id); setDetailContent(null); }}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full',
+                  activePage === page.id
+                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{page.name}</span>
+              </button>
+            );
+          })}
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 overflow-y-auto max-h-[calc(100vh-64px)]">
+          <div className="max-w-7xl mx-auto">
+            {/* Page Header */}
+            {activePage === 'oversikt' && (
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h1 className="text-3xl font-bold">Handz On Dashboard</h1>
+                  <p className="text-gray-400 mt-1">AI-telefonsvarer oversikt — alle {locations.length} lokasjoner</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <LiveDemoButton />
+                  <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 live-dot" />
+                    <span className="text-emerald-400 text-sm">System aktiv</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-400 text-xs">Sist oppdatert</p>
+                    <p className="text-white text-sm">{new Date().toLocaleTimeString('no-NO')}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Render active page */}
+            {activePage === 'oversikt' && <OversiktPage onSelectLocation={showLocationDetail} onSelectCall={showCallDetail} />}
+            {activePage === 'samtaler' && <SamtalerPage />}
+            {activePage === 'bookinger' && <BookingerPage />}
+            {activePage === 'lokasjoner' && <LokasjonerPage onSelectLocation={showLocationDetail} />}
+            {activePage === 'kunder' && <KunderPage />}
+            {activePage === 'rapporter' && <RapporterPage />}
+            {activePage === 'innstillinger' && <InnstillingerPage />}
+          </div>
+        </main>
+      </div>
+
+      {/* Detail Panel */}
+      <DetailPanel content={detailContent} onClose={() => setDetailContent(null)} />
+    </div>
+  );
+}
