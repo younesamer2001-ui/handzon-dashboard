@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handz On — AI Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#080d1a;--card:rgba(17,24,39,0.7);--card-solid:#111827;--card-hover:rgba(26,35,50,0.8);--border:rgba(30,41,59,0.6);
+    --text:#f1f5f9;--text-muted:#94a3b8;--teal:#0d9488;--teal-light:#14b8a6;
+    --teal-glow:rgba(13,148,136,0.12);--green:#22c55e;--red:#ef4444;
+    --amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;
+    --glass:rgba(255,255,255,0.03);--shadow:0 4px 24px rgba(0,0,0,0.25);--shadow-lg:0 8px 40px rgba(0,0,0,0.35);
+  }
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(13,148,136,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(59,130,246,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+  /* Top nav */
+  .topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(17,24,39,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);height:60px;z-index:10;position:relative;}
+  .topnav .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;}
+  .topnav .logo .dot{width:30px;height:30px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+  .topnav .right{display:flex;align-items:center;gap:20px;color:var(--text-muted);font-size:13px;}
+  .live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite;box-shadow:0 0 8px rgba(34,197,94,0.5);}
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(34,197,94,0.5);}50%{opacity:0.4;box-shadow:0 0 4px rgba(34,197,94,0.2);}}
+  .topnav .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 0 0 2px var(--bg),0 0 0 4px rgba(13,148,136,0.3);transition:box-shadow 0.2s;}
+  .topnav .avatar:hover{box-shadow:0 0 0 2px var(--bg),0 0 0 4px rgba(13,148,136,0.6);}
+
+  /* Layout */
+  .layout{display:flex;height:calc(100vh - 60px);position:relative;z-index:1;}
+  .sidebar{width:230px;background:rgba(17,24,39,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex-shrink:0;}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--text-muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.2s;cursor:pointer;user-select:none;position:relative;}
+  .sidebar a:hover{background:var(--teal-glow);color:var(--text);}
+  .sidebar a.active{background:linear-gradient(135deg,rgba(13,148,136,0.15),rgba(13,148,136,0.05));color:var(--teal-light);border:1px solid rgba(13,148,136,0.2);}
+  .sidebar a.active svg{stroke:var(--teal-light);}
+  .sidebar .sep{height:1px;background:var(--border);margin:10px 0;}
+  .sidebar .section-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;padding:8px 12px 4px;opacity:0.5;}
+
+  .main{flex:1;padding:24px 28px;overflow-y:auto;scroll-behavior:smooth;}
+
+  /* Page header */
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;}
+  .page-header h1{font-size:22px;font-weight:700;}
+  .page-header .subtitle{color:var(--text-muted);font-size:13px;margin-top:3px;}
+  .filters{display:flex;gap:8px;}
+  .filters select,.filters input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer;outline:none;transition:border-color 0.15s;}
+  .filters select:focus,.filters input:focus{border-color:var(--teal);}
+
+  /* KPI Cards */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .kpi-card{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden;}
+  .kpi-card::after{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:50%;opacity:0;transition:opacity 0.3s;}
+  .kpi-card:nth-child(1)::after{background:radial-gradient(circle,rgba(13,148,136,0.15),transparent);}
+  .kpi-card:nth-child(2)::after{background:radial-gradient(circle,rgba(34,197,94,0.15),transparent);}
+  .kpi-card:nth-child(3)::after{background:radial-gradient(circle,rgba(59,130,246,0.15),transparent);}
+  .kpi-card:nth-child(4)::after{background:radial-gradient(circle,rgba(245,158,11,0.15),transparent);}
+  .kpi-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:var(--shadow);}
+  .kpi-card:hover::after{opacity:1;}
+  .kpi-card .label{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:8px;letter-spacing:0.2px;}
+  .kpi-card .value{font-size:28px;font-weight:800;line-height:1.1;position:relative;z-index:1;}
+  .kpi-card .value.gradient-teal{background:linear-gradient(135deg,#0d9488,#14b8a6,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .kpi-card .value.gradient-green{background:linear-gradient(135deg,#16a34a,#22c55e,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .kpi-card .value.gradient-amber{background:linear-gradient(135deg,#d97706,#f59e0b,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .kpi-card .change{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;margin-top:6px;padding:3px 8px;border-radius:6px;}
+  .kpi-card .change.up{color:var(--green);background:rgba(34,197,94,0.1);}
+  .kpi-card .change.down{color:var(--red);background:rgba(239,68,68,0.1);}
+  .spark-row{display:flex;gap:3px;align-items:flex-end;height:28px;margin-top:8px;}
+  .spark-bar{flex:1;border-radius:3px;min-height:2px;transition:height 0.5s cubic-bezier(0.4,0,0.2,1);}
+
+  /* AI Summary */
+  .ai-summary{background:linear-gradient(135deg,rgba(13,148,136,0.1) 0%,rgba(59,130,246,0.05) 50%,rgba(139,92,246,0.04) 100%);border:1px solid rgba(13,148,136,0.25);border-radius:16px;padding:24px 26px;margin-bottom:24px;position:relative;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 20px rgba(13,148,136,0.06);}
+  .ai-summary:hover{border-color:rgba(13,148,136,0.5);box-shadow:0 8px 30px rgba(13,148,136,0.1);}
+  .ai-summary.collapsed .ai-summary-body{display:none;}
+  .ai-summary::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--teal),var(--blue),var(--purple));border-radius:4px 0 0 4px;}
+  .ai-summary::after{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(13,148,136,0.08),transparent 70%);pointer-events:none;}
+  .ai-summary-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
+  .ai-summary.collapsed .ai-summary-header{margin-bottom:0;}
+  .ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(13,148,136,0.2),rgba(59,130,246,0.15));border:1px solid rgba(13,148,136,0.3);padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:600;color:var(--teal-light);letter-spacing:0.3px;}
+  .ai-badge .sparkle{font-size:13px;animation:sparkle-rotate 3s linear infinite;}
+  @keyframes sparkle-rotate{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+  .ai-summary-header .timestamp{font-size:11.5px;color:var(--text-muted);}
+  .ai-summary-header .toggle-icon{margin-left:auto;color:var(--text-muted);font-size:18px;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
+  .ai-summary.collapsed .toggle-icon{transform:rotate(-90deg);}
+  .ai-summary-text{font-size:14px;line-height:1.75;color:rgba(241,245,249,0.9);margin-bottom:16px;position:relative;z-index:1;}
+  .ai-summary-text strong{color:var(--teal-light);font-weight:700;}
+  .ai-typing{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px;}
+  .ai-typing i{width:5px;height:5px;background:var(--teal-light);border-radius:50%;display:inline-block;animation:typing 1.4s infinite;}
+  .ai-typing i:nth-child(2){animation-delay:0.2s;}
+  .ai-typing i:nth-child(3){animation-delay:0.4s;}
+  @keyframes typing{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1);}}
+  .ai-insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:1;}
+  .ai-insight{background:rgba(8,13,26,0.6);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all 0.2s;}
+  .ai-insight:hover{border-color:var(--teal);transform:translateY(-1px);box-shadow:var(--shadow);}
+  .ai-insight .icon{font-size:20px;margin-bottom:6px;}
+  .ai-insight .title{font-size:12.5px;font-weight:700;margin-bottom:4px;}
+  .ai-insight .desc{font-size:12px;color:var(--text-muted);line-height:1.55;}
+  .title.green{color:var(--green);}.title.amber{color:var(--amber);}.title.blue{color:var(--blue);}
+
+  /* Charts */
+  .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px;}
+  .chart-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);}
+  .chart-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+  .chart-card h3 .chart-toggle{display:flex;gap:4px;}
+  .chart-card h3 .chart-toggle button{background:var(--bg);border:1px solid var(--border);color:var(--text-muted);padding:5px 12px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;}
+  .chart-card h3 .chart-toggle button:hover{border-color:var(--text-muted);}
+  .chart-card h3 .chart-toggle button.active{background:var(--teal-glow);border-color:var(--teal);color:var(--teal-light);}
+
+  /* Table */
+  .table-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px;box-shadow:var(--shadow);}
+  .table-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+  .table-card .search-box{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:12px;font-family:inherit;width:200px;outline:none;transition:border-color 0.15s;}
+  .table-card .search-box:focus{border-color:var(--teal);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;padding:8px 10px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:color 0.15s;}
+  thead th:hover{color:var(--teal-light);}
+  thead th.sorted{color:var(--teal-light);}
+  tbody td{padding:10px;border-bottom:1px solid var(--border);}
+  tbody tr{cursor:pointer;transition:background 0.1s;}
+  tbody tr:hover{background:var(--teal-glow);}
+  tbody tr.selected{background:rgba(13,148,136,0.1);border-left:3px solid var(--teal);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;}
+  .badge.green{background:rgba(34,197,94,0.12);color:var(--green);}
+  .badge.amber{background:rgba(245,158,11,0.12);color:var(--amber);}
+  .badge.red{background:rgba(239,68,68,0.12);color:var(--red);}
+  .progress-bar{width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:8px;}
+  .progress-bar .fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+
+  /* Calls */
+  .calls-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .call-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card);transition:all 0.15s;cursor:pointer;}
+  .call-item:hover{border-color:var(--teal);background:var(--card-hover);}
+  .call-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .call-icon.booked{background:rgba(34,197,94,0.12);}.call-icon.missed{background:rgba(239,68,68,0.12);}.call-icon.info{background:rgba(59,130,246,0.12);}.call-icon.transferred{background:rgba(245,158,11,0.12);}
+  .call-meta{flex:1;}
+  .call-meta .top{display:flex;justify-content:space-between;align-items:center;}
+  .call-meta .name{font-weight:600;font-size:13px;}
+  .call-meta .time{font-size:11px;color:var(--text-muted);}
+  .call-meta .desc{font-size:12px;color:var(--text-muted);margin-top:2px;}
+  .call-meta .tags{display:flex;gap:4px;margin-top:4px;}
+  .call-meta .tag{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+
+  /* Detail panel */
+  .detail-panel{position:fixed;right:-420px;top:60px;width:400px;height:calc(100vh - 60px);background:rgba(17,24,39,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-left:1px solid var(--border);padding:24px;overflow-y:auto;transition:right 0.35s cubic-bezier(0.4,0,0.2,1);z-index:5;box-shadow:-10px 0 40px rgba(0,0,0,0.4);}
+  .detail-panel.open{right:0;}
+  .detail-panel .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all 0.15s;}
+  .detail-panel .close-btn:hover{background:var(--bg);color:var(--text);}
+  .detail-panel h2{font-size:18px;font-weight:700;margin-bottom:4px;}
+  .detail-panel .detail-subtitle{color:var(--text-muted);font-size:13px;margin-bottom:20px;}
+  .detail-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .detail-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .detail-stat .label{font-size:11px;color:var(--text-muted);font-weight:500;}
+  .detail-stat .val{font-size:20px;font-weight:800;margin-top:2px;}
+  .detail-section{margin-bottom:16px;}
+  .detail-section h4{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-muted);}
+  .detail-call{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;margin-bottom:4px;background:var(--bg);font-size:12px;}
+  .detail-call .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+  /* Pages (hidden by default) */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* Booking page */
+  .booking-list{display:flex;flex-direction:column;gap:8px;}
+  .booking-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;cursor:pointer;}
+  .booking-item:hover{border-color:var(--teal);}
+  .booking-left{display:flex;align-items:center;gap:12px;}
+  .booking-time{font-size:13px;font-weight:700;color:var(--teal-light);min-width:50px;}
+  .booking-info .booking-name{font-weight:600;font-size:13.5px;}
+  .booking-info .booking-service{font-size:12px;color:var(--text-muted);}
+  .booking-loc{font-size:12px;color:var(--text-muted);text-align:right;}
+
+  /* Samtaler page */
+  .transcript-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;}
+  .transcript-card:hover{border-color:var(--teal);}
+  .transcript-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .transcript-header .caller{font-weight:600;font-size:14px;}
+  .transcript-header .dur{font-size:12px;color:var(--text-muted);}
+  .transcript-body{font-size:12.5px;color:var(--text-muted);line-height:1.6;}
+  .transcript-body .ai{color:var(--teal-light);}
+  .transcript-body .human{color:var(--text);}
+  .transcript-tags{display:flex;gap:6px;margin-top:8px;}
+
+  /* Settings page */
+  .settings-group{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow);}
+  .settings-group h3{font-size:14px;font-weight:600;margin-bottom:14px;}
+  .setting-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+  .setting-row:last-child{border-bottom:none;}
+  .setting-label{font-size:13px;}
+  .setting-label .hint{font-size:11.5px;color:var(--text-muted);display:block;margin-top:2px;}
+  .toggle{width:42px;height:24px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);}
+  .toggle.on{background:linear-gradient(135deg,var(--teal),var(--teal-light));box-shadow:0 0 12px rgba(13,148,136,0.3);}
+  .toggle .knob{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.25s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 4px rgba(0,0,0,0.2);}
+  .toggle.on .knob{left:21px;}
+
+  /* Empty state */
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+  .empty-state .icon{font-size:48px;margin-bottom:12px;}
+  .empty-state p{font-size:14px;}
+
+  /* Notification toast */
+  .toast{position:fixed;bottom:-60px;left:50%;transform:translateX(-50%);background:rgba(17,24,39,0.95);backdrop-filter:blur(20px);border:1px solid rgba(13,148,136,0.4);color:var(--text);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;z-index:100;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 20px rgba(13,148,136,0.1);}
+  .toast.show{bottom:24px;}
+  .toast .toast-icon{margin-right:8px;}
+
+  /* Report cards */
+  .report-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.2s;}
+  .report-card:hover{border-color:var(--teal);background:var(--card-hover);transform:translateX(4px);box-shadow:var(--shadow);}
+  .report-left{display:flex;align-items:center;gap:14px;}
+  .report-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .report-icon.weekly{background:rgba(13,148,136,0.12);}
+  .report-icon.monthly{background:rgba(139,92,246,0.12);}
+  .report-info .report-title{font-weight:600;font-size:14px;}
+  .report-info .report-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
+  .report-badge{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:600;}
+  .report-badge.new{background:rgba(34,197,94,0.12);color:var(--green);}
+  .report-badge.read{background:var(--bg);color:var(--text-muted);}
+
+  /* Customer detail */
+  .customer-stat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);}
+  .customer-stat .dot{width:8px;height:8px;border-radius:50%;}
+
+  @media(max-width:1100px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .chart-grid{grid-template-columns:1fr;}
+    .calls-grid{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .ai-insights{grid-template-columns:1fr;}
+    .main{padding:16px;}
+    .page-header{flex-direction:column;gap:12px;}
+    .filters{flex-wrap:wrap;}
+    .detail-panel{width:100%;right:-100%;}
+    .detail-panel.open{right:0;}
+    .topnav{padding:12px 16px;}
+    .topnav .right span:not(:last-child){display:none;}
+  }
+  @media(max-width:600px){
+    .kpi-row{grid-template-columns:1fr;}
+    .kpi-card .value{font-size:22px;}
+    .table-card{overflow-x:auto;}
+    table{min-width:500px;}
+    .topnav .logo span{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">
+    <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="url(#lg)"/><defs><linearGradient id="lg" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#0d9488"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs><text x="20" y="27" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="22" fill="#fff">A</text></svg>
+    <span>Arxon <span style="color:var(--text-muted);font-weight:400;">×</span> <svg style="vertical-align:middle;margin:0 2px" width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="#1a3a5c"/><text x="20" y="26" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="16" fill="#4db8ff">H</text></svg>Handz On</span>
+  </div>
+  <div class="right">
+    <span><span class="live-dot"></span>&nbsp; AI aktiv — alle 14 lokasjoner</span>
+    <span style="color:var(--text-muted);">|</span>
+    <span>Fre 28. mars 2026</span>
+    <div class="avatar" title="Ove Hagen">OH</div>
+  </div>
+</nav>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="section-label">Hovedmeny</div>
+  <a data-page="oversikt" class="active" onclick="switchPage('oversikt',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Oversikt
+  </a>
+  <a data-page="samtaler" onclick="switchPage('samtaler',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    Samtaler
+  </a>
+  <a data-page="bookinger" onclick="switchPage('bookinger',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Bookinger
+    <span style="margin-left:auto;background:var(--teal-glow);color:var(--teal-light);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:700;">12</span>
+  </a>
+  <a data-page="lokasjoner" onclick="switchPage('lokasjoner',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Lokasjoner
+  </a>
+  <div class="sep"></div>
+  <div class="section-label">Verktøy</div>
+  <a data-page="kunder" onclick="switchPage('kunder',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Kunder
+  </a>
+  <a data-page="rapporter" onclick="switchPage('rapporter',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Rapporter
+  </a>
+  <div class="sep"></div>
+  <a data-page="innstillinger" onclick="switchPage('innstillinger',this)">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Innstillinger
+  </a>
+</aside>
+
+<main class="main">
+
+<!-- ==================== OVERSIKT ==================== -->
+<div id="page-oversikt" class="page active">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Sanntidsoversikt over alle 14 lokasjoner</p>
+    </div>
+    <div class="filters">
+      <select id="locationFilter" onchange="filterData()">
+        <option value="all">Alle lokasjoner</option>
+      </select>
+      <select id="timeFilter" onchange="filterData()">
+        <option value="7d">Siste 7 dager</option>
+        <option value="today">I dag</option>
+        <option value="30d">Siste 30 dager</option>
+        <option value="month">Denne måneden</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="ai-summary" id="aiSummary" onclick="toggleAiSummary()">
+    <div class="ai-summary-header">
+      <span class="ai-badge"><span class="sparkle">✦</span> AI-oppsummering</span>
+      <span class="timestamp">Generert nå — basert på valgt periode</span>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="ai-summary-body">
+      <div class="ai-summary-text" id="aiText"></div>
+      <div class="ai-insights" id="aiInsights"></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>
+        Anrop og bookinger
+        <div class="chart-toggle">
+          <button class="active" onclick="setChartType('bar',this)">Stolpe</button>
+          <button onclick="setChartType('line',this)">Linje</button>
+        </div>
+      </h3>
+      <canvas id="weekChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Samtalekategori</h3>
+      <canvas id="categoryChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>
+      Ytelse per lokasjon
+      <input type="text" class="search-box" placeholder="Søk lokasjon..." oninput="filterLocations(this.value)">
+    </h3>
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')" class="sorted">Lokasjon ↕</th>
+          <th onclick="sortTable('calls')">Anrop ↕</th>
+          <th onclick="sortTable('bookings')">Bookinger ↕</th>
+          <th onclick="sortTable('rate')">Konvertering ↕</th>
+          <th onclick="sortTable('answer')">Svarrate ↕</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="locationTable"></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h3>Siste samtaler</h3>
+    <div class="calls-grid" id="recentCalls"></div>
+  </div>
+</div>
+
+<!-- ==================== SAMTALER ==================== -->
+<div id="page-samtaler" class="page">
+  <div class="page-header">
+    <div><h1>Samtaler</h1><p class="subtitle">Alle AI-samtaler med transkript</p></div>
+    <div class="filters">
+      <select><option>Alle typer</option><option>Booking</option><option>Prisspørsmål</option><option>Overført</option></select>
+      <select><option>I dag</option><option>Siste 7 dager</option><option>Siste 30 dager</option></select>
+    </div>
+  </div>
+  <div id="transcriptList"></div>
+</div>
+
+<!-- ==================== BOOKINGER ==================== -->
+<div id="page-bookinger" class="page">
+  <div class="page-header">
+    <div><h1>Bookinger i dag</h1><p class="subtitle">12 bookinger — fredag 28. mars</p></div>
+    <div class="filters">
+      <select><option>I dag</option><option>I morgen</option><option>Denne uken</option></select>
+    </div>
+  </div>
+  <div id="bookingList" class="booking-list"></div>
+</div>
+
+<!-- ==================== LOKASJONER ==================== -->
+<div id="page-lokasjoner" class="page">
+  <div class="page-header">
+    <div><h1>Lokasjoner</h1><p class="subtitle">Alle 14 aktive lokasjoner</p></div>
+  </div>
+  <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+    <div class="kpi-card"><div class="label">Aktive lokasjoner</div><div class="value" style="color:var(--green)">14</div></div>
+    <div class="kpi-card"><div class="label">Gjennomsnittlig svarrate</div><div class="value">97.3%</div></div>
+    <div class="kpi-card"><div class="label">Beste lokasjon</div><div class="value" style="font-size:20px;color:var(--teal-light)">Lillestrøm</div></div>
+  </div>
+  <div class="table-card"><h3>Alle lokasjoner</h3><table><thead><tr><th>Lokasjon</th><th>Adresse</th><th>Anrop/dag</th><th>Svarrate</th><th>Status</th></tr></thead><tbody id="locDetailTable"></tbody></table></div>
+</div>
+
+<!-- ==================== KUNDER ==================== -->
+<div id="page-kunder" class="page">
+  <div class="page-header"><div><h1>Kunder</h1><p class="subtitle">Kundebase fra AI-samtaler — 847 registrerte</p></div>
+    <div class="filters"><input type="text" placeholder="Søk kunde..." oninput="filterCustomers(this.value)"><select><option>Alle lokasjoner</option></select></div>
+  </div>
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+    <div class="kpi-card"><div class="label">Totalt registrerte</div><div class="value" style="color:var(--teal-light)">847</div></div>
+    <div class="kpi-card"><div class="label">Nye denne uken</div><div class="value" style="color:var(--green)">62</div></div>
+    <div class="kpi-card"><div class="label">Gjengangere</div><div class="value">34%</div></div>
+    <div class="kpi-card"><div class="label">Snitt bookinger</div><div class="value" style="color:var(--amber)">2.4</div></div>
+  </div>
+  <div class="table-card"><h3>Siste registrerte kunder <span style="font-weight:400;font-size:12px;color:var(--text-muted)">— viser 15 nyeste</span></h3><table><thead><tr><th>Navn</th><th>Telefon</th><th>Lokasjon</th><th>Foretrukket tjeneste</th><th>Siste kontakt</th><th>Bookinger</th></tr></thead><tbody id="customerTable"></tbody></table></div>
+</div>
+
+<!-- ==================== RAPPORTER ==================== -->
+<div id="page-rapporter" class="page">
+  <div class="page-header"><div><h1>Rapporter</h1><p class="subtitle">Ukentlige og månedlige rapporter</p></div>
+    <div class="filters"><select><option>Alle rapporter</option><option>Ukentlig</option><option>Månedlig</option></select></div>
+  </div>
+  <div id="reportList"></div>
+</div>
+
+<!-- ==================== INNSTILLINGER ==================== -->
+<div id="page-innstillinger" class="page">
+  <div class="page-header"><div><h1>Innstillinger</h1><p class="subtitle">Konfigurer AI-assistenten</p></div></div>
+  <div class="settings-group">
+    <h3>AI-assistent</h3>
+    <div class="setting-row"><div class="setting-label">AI aktiv<span class="hint">Slå av for å stoppe AI-svar midlertidig</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast(this.classList.contains('on')?'AI aktivert':'AI deaktivert')"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="setting-label">Automatisk booking<span class="hint">Tillat AI å booke timer uten bekreftelse</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="setting-label">SMS-bekreftelse<span class="hint">Send SMS til kunde etter booking</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="setting-label">Ansattvarsel<span class="hint">Varsle ansatte om nye bookinger</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="setting-label">Overføring til ansatt<span class="hint">Tillat AI å sette over til et menneske</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+  </div>
+  <div class="settings-group">
+    <h3>Varsler</h3>
+    <div class="setting-row"><div class="setting-label">E-postvarsler<span class="hint">Daglig oppsummering til oh@handzon.no</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="setting-label">Ukentlig rapport<span class="hint">Automatisk rapport hver mandag kl 08:00</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- Detail panel -->
+<div class="detail-panel" id="detailPanel">
+  <button class="close-btn" onclick="closeDetail()">✕</button>
+  <div id="detailContent"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const locations = [
+  {name:'Lambertseter',calls:112,bookings:45,rate:40.2,answer:98.2,status:'green',addr:'Lambertseter senter'},
+  {name:'Alna',calls:105,bookings:42,rate:40.0,answer:97.8,status:'green',addr:'Alna senter'},
+  {name:'Skullerud',calls:98,bookings:38,rate:38.8,answer:98.5,status:'green',addr:'Skullerudveien 15'},
+  {name:'Manglerud',calls:95,bookings:36,rate:37.9,answer:96.1,status:'green',addr:'Manglerud senter'},
+  {name:'Bryn',calls:101,bookings:40,rate:39.6,answer:97.4,status:'green',addr:'Brynsveien 3'},
+  {name:'Ryen',calls:88,bookings:33,rate:37.5,answer:98.0,status:'green',addr:'Ryensvingen 1'},
+  {name:'Helsfyr',calls:92,bookings:35,rate:38.0,answer:97.1,status:'green',addr:'Helsfyr T-bane'},
+  {name:'Tveita',calls:78,bookings:28,rate:35.9,answer:96.8,status:'amber',addr:'Tveita senter'},
+  {name:'Furuset',calls:85,bookings:32,rate:37.6,answer:97.5,status:'green',addr:'Furuset senter'},
+  {name:'Stovner',calls:82,bookings:30,rate:36.6,answer:95.2,status:'amber',addr:'Stovner senter'},
+  {name:'Grorud',calls:79,bookings:29,rate:36.7,answer:98.1,status:'green',addr:'Grorud senter'},
+  {name:'Romsås',calls:72,bookings:25,rate:34.7,answer:97.9,status:'green',addr:'Romsås senter'},
+  {name:'Lørenskog',calls:86,bookings:35,rate:40.7,answer:97.6,status:'green',addr:'Metro senter'},
+  {name:'Lillestrøm',calls:74,bookings:35,rate:47.3,answer:98.4,status:'green',addr:'Lillestrøm Torv'},
+];
+
+const recentCalls = [
+  {name:'Erik Johansen',type:'booked',icon:'📅',loc:'Lambertseter',desc:'Utvendig vask — i morgen kl 14:00',time:'3 min siden',dur:'1:42'},
+  {name:'Maria Olsen',type:'booked',icon:'📅',loc:'Bryn',desc:'Premium vask — lørdag kl 10:30',time:'8 min siden',dur:'2:15'},
+  {name:'Anders Berg',type:'info',icon:'ℹ️',loc:'Alna',desc:'Spurte om pris for innvendig rens',time:'12 min siden',dur:'0:58'},
+  {name:'Ukjent nummer',type:'transferred',icon:'🔀',loc:'Stovner',desc:'Overført til ansatt — spesiell forespørsel',time:'18 min siden',dur:'0:34'},
+  {name:'Kristine Haugen',type:'booked',icon:'📅',loc:'Skullerud',desc:'Innvendig + utvendig — onsdag kl 09:00',time:'25 min siden',dur:'2:48'},
+  {name:'Thomas Lie',type:'info',icon:'ℹ️',loc:'Manglerud',desc:'Spurte om åpningstider i helgen',time:'31 min siden',dur:'0:45'},
+  {name:'Silje Kristiansen',type:'booked',icon:'📅',loc:'Lillestrøm',desc:'Utvendig vask — mandag kl 11:00',time:'38 min siden',dur:'1:55'},
+  {name:'Petter Nilsen',type:'booked',icon:'📅',loc:'Lørenskog',desc:'Premium pakke — tirsdag kl 13:30',time:'42 min siden',dur:'3:02'},
+];
+
+const transcripts = [
+  {caller:'Erik Johansen',loc:'Lambertseter',dur:'1:42',type:'booking',lines:[
+    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask! Hvordan kan jeg hjelpe deg?'},
+    {who:'human',text:'Hei, jeg vil gjerne bestille en utvendig vask.'},
+    {who:'ai',text:'Selvfølgelig! Hvilken lokasjon passer best for deg?'},
+    {who:'human',text:'Lambertseter.'},
+    {who:'ai',text:'Flott! Vi har ledig tid i morgen kl 14:00. Passer det?'},
+    {who:'human',text:'Ja, det er perfekt.'},
+    {who:'ai',text:'Da har jeg booket utvendig vask på Lambertseter i morgen kl 14:00. Du får en SMS-bekreftelse. Ha en fin dag!'},
+  ]},
+  {caller:'Maria Olsen',loc:'Bryn',dur:'2:15',type:'booking',lines:[
+    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask! Hvordan kan jeg hjelpe deg?'},
+    {who:'human',text:'Hei! Hva koster premium-vasken deres?'},
+    {who:'ai',text:'Premium-pakken koster 599 kr og inkluderer utvendig vask, innvendig støvsuging, og polering. Skal jeg booke en time?'},
+    {who:'human',text:'Ja, på Bryn helst. Har dere ledig lørdag?'},
+    {who:'ai',text:'Lørdag kl 10:30 er ledig på Bryn. Skal jeg booke den?'},
+    {who:'human',text:'Ja takk!'},
+    {who:'ai',text:'Herlig! Premium vask på Bryn, lørdag kl 10:30. SMS-bekreftelse er på vei. Velkommen!'},
+  ]},
+  {caller:'Anders Berg',loc:'Alna',dur:'0:58',type:'info',lines:[
+    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask!'},
+    {who:'human',text:'Hei, hva koster innvendig rens?'},
+    {who:'ai',text:'Innvendig rens starter på 399 kr. Vi tilbyr også en komplett pakke med utvendig vask for 699 kr. Ønsker du å booke?'},
+    {who:'human',text:'Nei, jeg skal bare sjekke prisen. Takk!'},
+    {who:'ai',text:'Ingen problem! Ring gjerne tilbake når du er klar. Ha en fin dag!'},
+  ]},
+];
+
+const bookings = [
+  {time:'09:00',name:'Kristine Haugen',service:'Innvendig + utvendig',loc:'Skullerud'},
+  {time:'09:30',name:'Lars Pedersen',service:'Utvendig vask',loc:'Alna'},
+  {time:'10:00',name:'Anne Bakken',service:'Premium pakke',loc:'Lambertseter'},
+  {time:'10:30',name:'Maria Olsen',service:'Premium vask',loc:'Bryn'},
+  {time:'11:00',name:'Silje Kristiansen',service:'Utvendig vask',loc:'Lillestrøm'},
+  {time:'11:30',name:'Knut Hansen',service:'Innvendig rens',loc:'Helsfyr'},
+  {time:'12:00',name:'Ingrid Dahl',service:'Utvendig vask',loc:'Furuset'},
+  {time:'13:00',name:'Erik Johansen',service:'Utvendig vask',loc:'Lambertseter'},
+  {time:'13:30',name:'Petter Nilsen',service:'Premium pakke',loc:'Lørenskog'},
+  {time:'14:00',name:'Tone Larsen',service:'Innvendig + utvendig',loc:'Manglerud'},
+  {time:'14:30',name:'Rune Hauge',service:'Utvendig vask',loc:'Grorud'},
+  {time:'15:00',name:'Mette Sørensen',service:'Premium pakke',loc:'Ryen'},
+];
+
+const customers = [
+  {name:'Erik Johansen',phone:'+47 912 34 567',loc:'Lambertseter',service:'Utvendig vask',last:'I dag',count:3},
+  {name:'Maria Olsen',phone:'+47 923 45 678',loc:'Bryn',service:'Premium pakke',last:'I dag',count:5},
+  {name:'Kristine Haugen',phone:'+47 934 56 789',loc:'Skullerud',service:'Innvendig + utvendig',last:'I dag',count:2},
+  {name:'Lars Pedersen',phone:'+47 945 67 890',loc:'Alna',service:'Utvendig vask',last:'I går',count:1},
+  {name:'Silje Kristiansen',phone:'+47 956 78 901',loc:'Lillestrøm',service:'Utvendig vask',last:'I dag',count:4},
+  {name:'Petter Nilsen',phone:'+47 967 89 012',loc:'Lørenskog',service:'Premium pakke',last:'I dag',count:2},
+  {name:'Anne Bakken',phone:'+47 978 90 123',loc:'Lambertseter',service:'Innvendig rens',last:'I går',count:7},
+  {name:'Knut Hansen',phone:'+47 989 01 234',loc:'Helsfyr',service:'Innvendig rens',last:'2 dager siden',count:1},
+  {name:'Ingrid Dahl',phone:'+47 990 12 345',loc:'Furuset',service:'Utvendig vask',last:'I dag',count:3},
+  {name:'Tone Larsen',phone:'+47 901 23 456',loc:'Manglerud',service:'Innvendig + utvendig',last:'I dag',count:2},
+  {name:'Rune Hauge',phone:'+47 412 34 567',loc:'Grorud',service:'Utvendig vask',last:'I dag',count:1},
+  {name:'Mette Sørensen',phone:'+47 423 45 678',loc:'Ryen',service:'Premium pakke',last:'I dag',count:6},
+  {name:'Geir Kristoffersen',phone:'+47 434 56 789',loc:'Stovner',service:'Utvendig vask',last:'I går',count:2},
+  {name:'Lise Berg',phone:'+47 445 67 890',loc:'Tveita',service:'Innvendig rens',last:'2 dager siden',count:1},
+  {name:'Trond Haugen',phone:'+47 456 78 901',loc:'Romsås',service:'Premium pakke',last:'I går',count:4},
+];
+
+const reports = [
+  {title:'Ukerapport — Uke 13',date:'24. mars 2026',type:'weekly',status:'new',summary:'1 247 anrop, 483 bookinger, 97.3% svarrate. Lillestrøm toppresterte.'},
+  {title:'Ukerapport — Uke 12',date:'17. mars 2026',type:'weekly',status:'read',summary:'1 014 anrop, 392 bookinger, 95.2% svarrate. Ny rekord for Bryn.'},
+  {title:'Månedsrapport — Februar 2026',date:'1. mars 2026',type:'monthly',status:'read',summary:'3 842 anrop, 1 488 bookinger, 96.1% snitt svarrate. Stovner forbedret seg 12%.'},
+  {title:'Ukerapport — Uke 11',date:'10. mars 2026',type:'weekly',status:'read',summary:'987 anrop, 378 bookinger, 96.4% svarrate.'},
+  {title:'Ukerapport — Uke 10',date:'3. mars 2026',type:'weekly',status:'read',summary:'923 anrop, 351 bookinger, 95.8% svarrate.'},
+  {title:'Månedsrapport — Januar 2026',date:'1. februar 2026',type:'monthly',status:'read',summary:'3 201 anrop, 1 203 bookinger, 94.7% snitt svarrate. Første fulle driftsmåned.'},
+  {title:'Ukerapport — Uke 9',date:'24. februar 2026',type:'weekly',status:'read',summary:'891 anrop, 334 bookinger, 95.1% svarrate.'},
+  {title:'Oppstartsrapport',date:'15. januar 2026',type:'monthly',status:'read',summary:'Alle 14 lokasjoner aktivert. Første uke: 412 anrop, 142 bookinger.'},
+];
+
+// ===== CHART SETUP =====
+Chart.defaults.color='#94a3b8';Chart.defaults.borderColor='#1e293b';Chart.defaults.font.family='Inter,sans-serif';
+
+let weekChart, categoryChart, currentChartType='bar';
+const weekLabels=['Man','Tir','Ons','Tor','Fre','Lør','Søn'];
+const weekCalls=[156,189,172,201,198,186,145];
+const weekBookings=[58,72,65,81,78,74,55];
+
+function initCharts(){
+  const wCtx=document.getElementById('weekChart').getContext('2d');
+  weekChart=new Chart(wCtx,{
+    type:currentChartType,
+    data:{labels:weekLabels,datasets:[
+      {label:'Anrop',data:weekCalls,backgroundColor:'rgba(13,148,136,0.5)',borderColor:'#0d9488',borderWidth:currentChartType==='line'?2:1,borderRadius:4,tension:0.3,fill:currentChartType==='line'},
+      {label:'Bookinger',data:weekBookings,backgroundColor:'rgba(34,197,94,0.5)',borderColor:'#22c55e',borderWidth:currentChartType==='line'?2:1,borderRadius:4,tension:0.3,fill:currentChartType==='line'}
+    ]},
+    options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:12}}}},
+      scales:{y:{beginAtZero:true,grid:{color:'#1e293b'}},x:{grid:{display:false}}},
+      animation:{duration:600}
+    }
+  });
+
+  const cCtx=document.getElementById('categoryChart').getContext('2d');
+  categoryChart=new Chart(cCtx,{
+    type:'doughnut',
+    data:{labels:['Booking','Prisspørsmål','Åpningstider','Overført','Annet'],
+      datasets:[{data:[483,312,198,89,165],backgroundColor:['#22c55e','#0d9488','#3b82f6','#f59e0b','#6366f1'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}},animation:{duration:600}}
+  });
+}
+
+function setChartType(type,btn){
+  currentChartType=type;
+  document.querySelectorAll('.chart-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  weekChart.destroy();
+  const wCtx=document.getElementById('weekChart').getContext('2d');
+  weekChart=new Chart(wCtx,{
+    type,
+    data:{labels:weekLabels,datasets:[
+      {label:'Anrop',data:weekCalls,backgroundColor:'rgba(13,148,136,0.3)',borderColor:'#0d9488',borderWidth:type==='line'?2.5:1,borderRadius:4,tension:0.35,fill:type==='line',pointRadius:type==='line'?4:0,pointBackgroundColor:'#0d9488'},
+      {label:'Bookinger',data:weekBookings,backgroundColor:'rgba(34,197,94,0.3)',borderColor:'#22c55e',borderWidth:type==='line'?2.5:1,borderRadius:4,tension:0.35,fill:type==='line',pointRadius:type==='line'?4:0,pointBackgroundColor:'#22c55e'}
+    ]},
+    options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:12}}}},
+      scales:{y:{beginAtZero:true,grid:{color:'#1e293b'}},x:{grid:{display:false}}},animation:{duration:600}}
+  });
+}
+
+// ===== RENDER FUNCTIONS =====
+function renderKPIs(){
+  const totalCalls=locations.reduce((s,l)=>s+l.calls,0);
+  const totalBookings=locations.reduce((s,l)=>s+l.bookings,0);
+  const avgAnswer=(locations.reduce((s,l)=>s+l.answer,0)/locations.length).toFixed(1);
+  const saved=Math.round(totalBookings*500);
+  const kpis=[
+    {label:'Anrop besvart av AI',value:totalCalls.toLocaleString('nb'),cls:'gradient-teal',change:'+23%',sparks:[40,55,45,70,85,65,100],sparkColor:'var(--teal)'},
+    {label:'Bookinger gjort',value:totalBookings.toLocaleString('nb'),cls:'gradient-green',change:'+18%',sparks:[50,65,55,80,72,90,100],sparkColor:'var(--green)'},
+    {label:'Svarrate',value:avgAnswer+'%',cls:'',change:'+2.1pp',sparks:[92,94,93,96,95,98,100],sparkColor:'var(--blue)'},
+    {label:'Estimert spart omsetning',value:saved.toLocaleString('nb')+' kr',cls:'gradient-amber',change:'+31%',sparks:[35,50,60,55,75,85,100],sparkColor:'var(--amber)'},
+  ];
+  document.getElementById('kpiRow').innerHTML=kpis.map((k,i)=>`
+    <div class="kpi-card" onclick="showKpiDetail(${i})">
+      <div class="label">${k.label}</div>
+      <div class="value ${k.cls}">${k.value}</div>
+      <div class="change up">▲ ${k.change} vs forrige uke</div>
+      <div class="spark-row">${k.sparks.map(h=>`<div class="spark-bar" style="height:${h}%;background:${k.sparkColor}"></div>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function renderAISummary(){
+  const total=locations.reduce((s,l)=>s+l.calls,0);
+  const booked=locations.reduce((s,l)=>s+l.bookings,0);
+  const convRate=(booked/total*100).toFixed(1);
+  const missed=total-Math.round(total*0.973);
+  document.getElementById('aiText').innerHTML=`
+    Denne uken har AI-assistenten håndtert <strong>${total.toLocaleString('nb')} anrop</strong> på tvers av alle 14 lokasjoner, opp 23% fra forrige uke.
+    <strong>${booked} bookinger</strong> ble gjort direkte gjennom samtale — det tilsvarer <strong>${convRate}% konverteringsrate</strong>.
+    Estimert spart omsetning fra tapte anrop er <strong>${(booked*500).toLocaleString('nb')} kr</strong>.
+    Svarrate ligger stabilt på <strong>97.3%</strong>, som betyr at kun ${missed} av ${total.toLocaleString('nb')} anrop ikke ble besvart.<span class="ai-typing"><i></i><i></i><i></i></span>
+  `;
+  document.getElementById('aiInsights').innerHTML=`
+    <div class="ai-insight"><div class="icon">📈</div><div class="title green">Topprestasjon</div><div class="desc">Lillestrøm har høyest konverteringsrate denne uken med 47.3% — 22% over snittet. Vurder å bruke deres mønster som mal.</div></div>
+    <div class="ai-insight"><div class="icon">⚠️</div><div class="title amber">Trenger oppmerksomhet</div><div class="desc">Stovner og Tveita har lavere konvertering (35–36%). Flest prisspørsmål — vurder bedre pristilbud i AI-skriptet.</div></div>
+    <div class="ai-insight"><div class="icon">💡</div><div class="title blue">Anbefaling</div><div class="desc">312 prisspørsmål uten booking. Legg til «book nå med 10% rabatt» for å konvertere 15–20% av disse.</div></div>
+  `;
+}
+
+let sortField='name',sortAsc=true;
+function renderLocations(filter=''){
+  let data=[...locations];
+  if(filter)data=data.filter(l=>l.name.toLowerCase().includes(filter.toLowerCase()));
+  data.sort((a,b)=>{
+    let va=a[sortField],vb=b[sortField];
+    if(typeof va==='string')return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+    return sortAsc?va-vb:vb-va;
+  });
+  document.getElementById('locationTable').innerHTML=data.map(l=>{
+    const statusLabel=l.status==='green'?'Aktiv':l.status==='amber'?'Lav konv.':'Problem';
+    const fillColor=l.rate>40?'var(--green)':l.rate>36?'var(--teal)':'var(--amber)';
+    return`<tr onclick="showLocationDetail('${l.name}')">
+      <td style="font-weight:600">${l.name}</td>
+      <td>${l.calls}</td><td>${l.bookings}</td>
+      <td>${l.rate}%<div class="progress-bar"><div class="fill" style="width:${l.rate*2}%;background:${fillColor}"></div></div></td>
+      <td>${l.answer}%</td>
+      <td><span class="badge ${l.status}">${statusLabel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCalls(){
+  document.getElementById('recentCalls').innerHTML=recentCalls.map(c=>`
+    <div class="call-item" onclick="showCallDetail('${c.name}')">
+      <div class="call-icon ${c.type}">${c.icon}</div>
+      <div class="call-meta">
+        <div class="top"><span class="name">${c.name}</span><span class="time">${c.time}</span></div>
+        <div class="desc">${c.loc} — ${c.desc}</div>
+        <div class="tags"><span class="tag">${c.dur}</span><span class="tag">${c.type==='booked'?'Booket':c.type==='info'?'Info':'Overført'}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTranscripts(){
+  document.getElementById('transcriptList').innerHTML=transcripts.map(t=>`
+    <div class="transcript-card" onclick="showTranscriptDetail('${t.caller}')">
+      <div class="transcript-header">
+        <span class="caller">${t.caller} — ${t.loc}</span>
+        <span class="dur">${t.dur}</span>
+      </div>
+      <div class="transcript-body">${t.lines.slice(0,3).map(l=>`<span class="${l.who}">${l.who==='ai'?'🤖':'👤'} ${l.text}</span>`).join('<br>')}<br><span style="color:var(--text-muted)">... klikk for å se hele samtalen</span></div>
+      <div class="transcript-tags"><span class="tag">${t.type==='booking'?'📅 Booking':'ℹ️ Info'}</span><span class="tag">${t.loc}</span></div>
+    </div>
+  `).join('');
+}
+
+function renderBookings(){
+  document.getElementById('bookingList').innerHTML=bookings.map(b=>`
+    <div class="booking-item" onclick="showToast('Booking: ${b.name} — ${b.service} kl ${b.time}')">
+      <div class="booking-left">
+        <div class="booking-time">${b.time}</div>
+        <div class="booking-info"><div class="booking-name">${b.name}</div><div class="booking-service">${b.service}</div></div>
+      </div>
+      <div class="booking-loc">📍 ${b.loc}</div>
+    </div>
+  `).join('');
+}
+
+function renderLocDetail(){
+  document.getElementById('locDetailTable').innerHTML=locations.map(l=>`
+    <tr onclick="showLocationDetail('${l.name}')" style="cursor:pointer">
+      <td style="font-weight:600">${l.name}</td><td>${l.addr}</td><td>${Math.round(l.calls/7)}</td><td>${l.answer}%</td>
+      <td><span class="badge ${l.status}">${l.status==='green'?'Aktiv':'Lav konv.'}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderCustomers(filter=''){
+  let data=filter?customers.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())||c.loc.toLowerCase().includes(filter.toLowerCase())):customers;
+  document.getElementById('customerTable').innerHTML=data.map(c=>`
+    <tr onclick="showToast('Kunde: ${c.name} — ${c.count} bookinger')">
+      <td style="font-weight:600">${c.name}</td><td style="color:var(--text-muted)">${c.phone}</td><td>${c.loc}</td><td>${c.service}</td><td>${c.last}</td>
+      <td><span style="background:var(--teal-glow);color:var(--teal-light);padding:3px 10px;border-radius:6px;font-weight:700;font-size:12px">${c.count}</span></td>
+    </tr>
+  `).join('');
+}
+function filterCustomers(q){renderCustomers(q);}
+
+function renderReports(){
+  document.getElementById('reportList').innerHTML=reports.map(r=>`
+    <div class="report-card" onclick="showReportDetail('${r.title}')">
+      <div class="report-left">
+        <div class="report-icon ${r.type}">${r.type==='weekly'?'📋':'📊'}</div>
+        <div class="report-info">
+          <div class="report-title">${r.title}</div>
+          <div class="report-meta">${r.date} — ${r.summary.substring(0,60)}...</div>
+        </div>
+      </div>
+      <span class="report-badge ${r.status}">${r.status==='new'?'Ny':'Lest'}</span>
+    </div>
+  `).join('');
+}
+
+function showReportDetail(title){
+  const r=reports.find(x=>x.title===title);if(!r)return;
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('detailContent').innerHTML=`
+    <h2>${r.title}</h2>
+    <div class="detail-subtitle">${r.date} — ${r.type==='weekly'?'Ukentlig rapport':'Månedsrapport'}</div>
+    <div class="detail-section" style="margin-top:16px">
+      <div class="ai-summary" style="margin:0;cursor:default" onclick="event.stopPropagation()">
+        <div class="ai-summary-header"><span class="ai-badge"><span class="sparkle">✦</span> AI-sammendrag</span></div>
+        <div class="ai-summary-body"><div class="ai-summary-text">${r.summary}</div></div>
+      </div>
+    </div>
+    <div class="detail-stat-grid" style="margin-top:16px">
+      <div class="detail-stat"><div class="label">Anrop</div><div class="val" style="color:var(--teal-light)">${r.type==='monthly'?'3 842':'1 247'}</div></div>
+      <div class="detail-stat"><div class="label">Bookinger</div><div class="val" style="color:var(--green)">${r.type==='monthly'?'1 488':'483'}</div></div>
+      <div class="detail-stat"><div class="label">Svarrate</div><div class="val">${r.type==='monthly'?'96.1%':'97.3%'}</div></div>
+      <div class="detail-stat"><div class="label">Spart omsetning</div><div class="val" style="color:var(--amber)">${r.type==='monthly'?'744K':'241K'}</div></div>
+    </div>
+    <div class="detail-section" style="margin-top:16px"><h4>Topp 3 lokasjoner</h4>
+      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#1</span><span style="font-weight:600">Lillestrøm</span><span style="margin-left:auto;color:var(--green);font-weight:700">47.3%</span></div>
+      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#2</span><span style="font-weight:600">Lørenskog</span><span style="margin-left:auto;color:var(--green);font-weight:700">40.7%</span></div>
+      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#3</span><span style="font-weight:600">Lambertseter</span><span style="margin-left:auto;color:var(--green);font-weight:700">40.2%</span></div>
+    </div>
+  `;
+  panel.classList.add('open');
+}
+
+// ===== INTERACTIONS =====
+function switchPage(pageId,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  closeDetail();
+  document.querySelector('.main').scrollTop=0;
+}
+
+function toggleAiSummary(){document.getElementById('aiSummary').classList.toggle('collapsed');}
+
+function sortTable(field){
+  if(sortField===field)sortAsc=!sortAsc;else{sortField=field;sortAsc=true;}
+  document.querySelectorAll('thead th').forEach(th=>th.classList.remove('sorted'));
+  renderLocations();
+}
+function filterLocations(q){renderLocations(q);}
+
+function filterData(){
+  const loc=document.getElementById('locationFilter').value;
+  const time=document.getElementById('timeFilter').value;
+  const mult=time==='today'?0.15:time==='30d'?4.2:time==='month'?3.8:1;
+  showToast(`Filter: ${loc==='all'?'Alle lokasjoner':loc} — ${document.getElementById('timeFilter').selectedOptions[0].text}`);
+  renderKPIs();renderAISummary();
+}
+
+function showLocationDetail(name){
+  const l=locations.find(x=>x.name===name);if(!l)return;
+  const panel=document.getElementById('detailPanel');
+  const locCalls=recentCalls.filter(c=>c.loc===name);
+  document.getElementById('detailContent').innerHTML=`
+    <h2>${l.name}</h2>
+    <div class="detail-subtitle">📍 ${l.addr} — <span class="badge ${l.status}" style="vertical-align:middle">${l.status==='green'?'Aktiv':'Lav konv.'}</span></div>
+    <div class="detail-stat-grid">
+      <div class="detail-stat"><div class="label">Anrop</div><div class="val" style="color:var(--teal-light)">${l.calls}</div></div>
+      <div class="detail-stat"><div class="label">Bookinger</div><div class="val" style="color:var(--green)">${l.bookings}</div></div>
+      <div class="detail-stat"><div class="label">Konvertering</div><div class="val">${l.rate}%</div></div>
+      <div class="detail-stat"><div class="label">Svarrate</div><div class="val">${l.answer}%</div></div>
+    </div>
+    <div class="detail-section"><h4>Siste samtaler herfra</h4>
+      ${locCalls.length?locCalls.map(c=>`<div class="detail-call"><div class="dot" style="background:${c.type==='booked'?'var(--green)':c.type==='info'?'var(--blue)':'var(--amber)'}"></div>${c.name} — ${c.desc}<span style="margin-left:auto;color:var(--text-muted);font-size:11px">${c.time}</span></div>`).join(''):'<div style="color:var(--text-muted);font-size:13px">Ingen samtaler akkurat nå</div>'}
+    </div>
+  `;
+  panel.classList.add('open');
+}
+
+function showCallDetail(name){
+  const c=recentCalls.find(x=>x.name===name);if(!c)return;
+  const t=transcripts.find(x=>x.caller===name);
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('detailContent').innerHTML=`
+    <h2>${c.name}</h2>
+    <div class="detail-subtitle">📍 ${c.loc} — ${c.time} — ${c.dur}</div>
+    <div class="detail-stat-grid">
+      <div class="detail-stat"><div class="label">Type</div><div class="val" style="font-size:16px;color:${c.type==='booked'?'var(--green)':c.type==='info'?'var(--blue)':'var(--amber)'}">${c.type==='booked'?'Booking':c.type==='info'?'Info':'Overført'}</div></div>
+      <div class="detail-stat"><div class="label">Varighet</div><div class="val" style="font-size:16px">${c.dur}</div></div>
+    </div>
+    ${t?`<div class="detail-section"><h4>Transkripsjon</h4>${t.lines.map(l=>`<div class="detail-call" style="border-left:3px solid ${l.who==='ai'?'var(--teal)':'var(--blue)'};margin-bottom:6px"><span style="color:${l.who==='ai'?'var(--teal-light)':'var(--text)'}">${l.who==='ai'?'🤖 AI':'👤 Kunde'}</span><br><span style="color:var(--text-muted)">${l.text}</span></div>`).join('')}</div>`:'<div style="color:var(--text-muted);font-size:13px;margin-top:12px">Transkripsjon ikke tilgjengelig for denne samtalen</div>'}
+  `;
+  panel.classList.add('open');
+}
+
+function showTranscriptDetail(caller){
+  const t=transcripts.find(x=>x.caller===caller);if(!t)return;
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('detailContent').innerHTML=`
+    <h2>${t.caller}</h2>
+    <div class="detail-subtitle">📍 ${t.loc} — ${t.dur} — ${t.type==='booking'?'📅 Booking':'ℹ️ Info'}</div>
+    <div class="detail-section"><h4>Full transkripsjon</h4>${t.lines.map(l=>`<div class="detail-call" style="border-left:3px solid ${l.who==='ai'?'var(--teal)':'var(--blue)'};margin-bottom:6px"><span style="color:${l.who==='ai'?'var(--teal-light)':'var(--text)'};font-weight:600">${l.who==='ai'?'🤖 AI':'👤 Kunde'}</span><br><span style="color:var(--text-muted)">${l.text}</span></div>`).join('')}</div>
+  `;
+  panel.classList.add('open');
+}
+
+function showKpiDetail(idx){
+  const titles=['Anrop besvart av AI','Bookinger gjort','Svarrate','Estimert spart omsetning'];
+  const panel=document.getElementById('detailPanel');
+  const sorted=[...locations].sort((a,b)=>idx===0?b.calls-a.calls:idx===1?b.bookings-a.bookings:idx===2?b.answer-a.answer:b.bookings-a.bookings);
+  document.getElementById('detailContent').innerHTML=`
+    <h2>${titles[idx]}</h2>
+    <div class="detail-subtitle">Rangert per lokasjon — siste 7 dager</div>
+    <div class="detail-section">${sorted.map((l,i)=>{
+      const val=idx===0?l.calls:idx===1?l.bookings:idx===2?l.answer+'%':((l.bookings*500).toLocaleString('nb')+' kr');
+      return`<div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#${i+1}</span><span style="font-weight:600">${l.name}</span><span style="margin-left:auto;color:var(--teal-light);font-weight:700">${val}</span></div>`;
+    }).join('')}</div>
+  `;
+  panel.classList.add('open');
+}
+
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.innerHTML='<span class="toast-icon">✦</span> '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ===== INIT =====
+// Populate location filter
+const sel=document.getElementById('locationFilter');
+locations.forEach(l=>{const o=document.createElement('option');o.value=l.name;o.text=l.name;sel.add(o);});
+
+renderKPIs();renderAISummary();renderLocations();renderCalls();renderTranscripts();renderBookings();renderLocDetail();renderCustomers();renderReports();
+initCharts();
+
+// Keyboard shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeDetail();
+  if(e.key==='1')switchPage('oversikt',document.querySelector('[data-page="oversikt"]'));
+  if(e.key==='2')switchPage('samtaler',document.querySelector('[data-page="samtaler"]'));
+  if(e.key==='3')switchPage('bookinger',document.querySelector('[data-page="bookinger"]'));
+  if(e.key==='4')switchPage('lokasjoner',document.querySelector('[data-page="lokasjoner"]'));
+  if(e.key==='5')switchPage('kunder',document.querySelector('[data-page="kunder"]'));
+  if(e.key==='6')switchPage('rapporter',document.querySelector('[data-page="rapporter"]'));
+  if(e.key==='7')switchPage('innstillinger',document.querySelector('[data-page="innstillinger"]'));
+});
+</script>
+</body>
+</html>
