@@ -839,7 +839,119 @@ function LokasjonerPage({ onSelectLocation }: { onSelectLocation: (loc: Location
                 <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Anrop/dag</th>
                 <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Svarrate</th>
                 <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Status</th>
-   ter gap-4">
+              </tr>
+            </thead>
+            <tbody>
+              {locations.map((loc, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
+                  onClick={() => onSelectLocation(loc)}
+                >
+                  <td className="py-3 px-2 font-medium text-white">{loc.name}</td>
+                  <td className="py-3 px-2 text-gray-400">{loc.addr}</td>
+                  <td className="py-3 px-2 text-gray-300">{Math.round(loc.calls / 7)}</td>
+                  <td className="py-3 px-2 text-gray-300">{loc.answer}%</td>
+                  <td className="py-3 px-2">
+                    <span className={cn(
+                      'text-xs font-semibold px-2.5 py-1 rounded-md',
+                      loc.status === 'green' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-orange-500/10 text-orange-400'
+                    )}>
+                      {loc.status === 'green' ? 'Aktiv' : 'Lav konv.'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: KUNDER ====================
+function KunderPage() {
+  const [search, setSearch] = useState('');
+  const filtered = search
+    ? customers.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.loc.toLowerCase().includes(search.toLowerCase()))
+    : customers;
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Kunder</h2>
+          <p className="text-gray-400 text-sm">Kundebase fra AI-samtaler â 847 registrerte</p>
+        </div>
+        <input
+          type="text"
+          placeholder="SÃ¸k kunde..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-lg text-sm outline-none focus:border-blue-500/50 transition-colors"
+        />
+      </div>
+
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <StatCard title="Totalt registrerte" value="847" icon={Users} color="blue" />
+        <StatCard title="Nye denne uken" value="62" icon={TrendingUp} color="emerald" />
+        <StatCard title="Gjengangere" value="34%" icon={Activity} color="purple" />
+        <StatCard title="Snitt bookinger" value="2.4" icon={Calendar} color="orange" />
+      </div>
+
+      {/* Customer table */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h3 className="text-white font-semibold mb-4">Siste registrerte kunder <span className="font-normal text-xs text-gray-500">â viser {filtered.length} nyeste</span></h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Navn</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Telefon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Lokasjon</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Foretrukket tjeneste</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Siste kontakt</th>
+                <th className="text-left py-3 px-2 text-gray-400 font-semibold text-xs uppercase">Bookinger</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => (
+                <tr key={i} className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors">
+                  <td className="py-3 px-2 font-medium text-white">{c.name}</td>
+                  <td className="py-3 px-2 text-gray-400">{c.phone}</td>
+                  <td className="py-3 px-2 text-gray-300">{c.loc}</td>
+                  <td className="py-3 px-2 text-gray-300">{c.service}</td>
+                  <td className="py-3 px-2 text-gray-400">{c.last}</td>
+                  <td className="py-3 px-2">
+                    <span className="bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-md text-xs font-bold">{c.count}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ==================== PAGE: RAPPORTER ====================
+function RapporterPage() {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Rapporter</h2>
+          <p className="text-gray-400 text-sm">Ukentlige og mÃ¥nedlige rapporter</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {reports.map((r, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center justify-between hover:bg-white/[0.07] transition-colors cursor-pointer group">
+            <div className="flex items-center gap-4">
               <div className={cn(
                 'w-10 h-10 rounded-lg flex items-center justify-center text-lg',
                 r.type === 'weekly' ? 'bg-blue-500/10' : 'bg-purple-500/10'
