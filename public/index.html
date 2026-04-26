@@ -3,455 +3,1035 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Handz On — AI Dashboard</title>
+<title>Mekkern — AI Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;}
-  :root{
-    --bg:#080d1a;--card:rgba(17,24,39,0.7);--card-solid:#111827;--card-hover:rgba(26,35,50,0.8);--border:rgba(30,41,59,0.6);
-    --text:#f1f5f9;--text-muted:#94a3b8;--teal:#0d9488;--teal-light:#14b8a6;
-    --teal-glow:rgba(13,148,136,0.12);--green:#22c55e;--red:#ef4444;
-    --amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;
-    --glass:rgba(255,255,255,0.03);--shadow:0 4px 24px rgba(0,0,0,0.25);--shadow-lg:0 8px 40px rgba(0,0,0,0.35);
-  }
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;}
-  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(13,148,136,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(59,130,246,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0eee8;
+  --card:#ffffff;
+  --card-soft:#fafaf7;
+  --text:#1a1a1a;
+  --text-muted:#6b7280;
+  --text-light:#9ca3af;
+  --border:#e8e5dd;
+  --green-dark:#1f5135;
+  --green:#2d7a4f;
+  --green-light:#6fcf97;
+  --green-pale:#dcefe4;
+  --amber:#f59e0b;
+  --amber-pale:#fef3c7;
+  --red:#dc2626;
+  --red-pale:#fee2e2;
+  --blue:#3b82f6;
+  --blue-pale:#dbeafe;
+  --purple:#a78bfa;
+  --purple-pale:#ede9fe;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04);
+  --shadow:0 4px 16px rgba(0,0,0,0.05);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.08);
+  --radius:18px;
+}
+body{
+  font-family:'Outfit',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding:14px;
+}
 
-  /* Top nav */
-  .topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(17,24,39,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);height:60px;z-index:10;position:relative;}
-  .topnav .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;}
-  .topnav .logo .dot{width:30px;height:30px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
-  .topnav .right{display:flex;align-items:center;gap:20px;color:var(--text-muted);font-size:13px;}
-  .live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite;box-shadow:0 0 8px rgba(34,197,94,0.5);}
-  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(34,197,94,0.5);}50%{opacity:0.4;box-shadow:0 0 4px rgba(34,197,94,0.2);}}
-  .topnav .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 0 0 2px var(--bg),0 0 0 4px rgba(13,148,136,0.3);transition:box-shadow 0.2s;}
-  .topnav .avatar:hover{box-shadow:0 0 0 2px var(--bg),0 0 0 4px rgba(13,148,136,0.6);}
+.app{display:grid;grid-template-columns:240px 1fr;gap:14px;height:calc(100vh - 28px);}
 
-  /* Layout */
-  .layout{display:flex;height:calc(100vh - 60px);position:relative;z-index:1;}
-  .sidebar{width:230px;background:rgba(17,24,39,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex-shrink:0;}
-  .sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--text-muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.2s;cursor:pointer;user-select:none;position:relative;}
-  .sidebar a:hover{background:var(--teal-glow);color:var(--text);}
-  .sidebar a.active{background:linear-gradient(135deg,rgba(13,148,136,0.15),rgba(13,148,136,0.05));color:var(--teal-light);border:1px solid rgba(13,148,136,0.2);}
-  .sidebar a.active svg{stroke:var(--teal-light);}
-  .sidebar .sep{height:1px;background:var(--border);margin:10px 0;}
-  .sidebar .section-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;padding:8px 12px 4px;opacity:0.5;}
+/* === SIDEBAR === */
+.sidebar{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:24px 16px;
+  display:flex;flex-direction:column;
+  box-shadow:var(--shadow-sm);
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px 28px;}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#dc2626,#f59e0b);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:18px;
+}
+.brand-name{font-weight:700;font-size:20px;}
+.brand-sub{color:var(--text-muted);font-weight:400;font-size:13px;}
 
-  .main{flex:1;padding:24px 28px;overflow-y:auto;scroll-behavior:smooth;}
+.nav-label{
+  font-size:11px;color:var(--text-light);font-weight:500;
+  letter-spacing:0.5px;padding:10px 12px 6px;
+  text-transform:uppercase;
+}
+.nav a{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:10px;
+  color:var(--text-muted);text-decoration:none;
+  font-size:14.5px;font-weight:500;
+  transition:all 0.15s;cursor:pointer;
+  position:relative;user-select:none;
+}
+.nav a:hover{background:#f7f5f0;color:var(--text);}
+.nav a.active{background:var(--green-pale);color:var(--green-dark);font-weight:600;}
+.nav a.active::before{
+  content:'';position:absolute;left:-16px;top:50%;
+  transform:translateY(-50%);
+  width:4px;height:24px;background:var(--green);
+  border-radius:0 4px 4px 0;
+}
+.nav a .badge{
+  margin-left:auto;background:#fef3c7;color:#92400e;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;
+}
 
-  /* Page header */
-  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;}
-  .page-header h1{font-size:22px;font-weight:700;}
-  .page-header .subtitle{color:var(--text-muted);font-size:13px;margin-top:3px;}
-  .filters{display:flex;gap:8px;}
-  .filters select,.filters input{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer;outline:none;transition:border-color 0.15s;}
-  .filters select:focus,.filters input:focus{border-color:var(--teal);}
+.promo{
+  margin-top:auto;
+  background:linear-gradient(135deg,#1a3b2a,#2d7a4f);
+  border-radius:14px;padding:18px 16px;color:#fff;
+  position:relative;overflow:hidden;
+}
+.promo::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 80% 80%,rgba(255,255,255,0.1),transparent 60%);
+}
+.promo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;font-size:16px;position:relative;z-index:1;
+}
+.promo h4{font-size:15px;font-weight:700;margin-bottom:2px;line-height:1.3;position:relative;z-index:1;}
+.promo p{font-size:11.5px;opacity:0.7;margin-bottom:12px;position:relative;z-index:1;}
+.promo button{
+  background:#fff;color:var(--green-dark);border:none;
+  padding:8px 18px;border-radius:8px;font-family:inherit;
+  font-weight:600;font-size:12.5px;cursor:pointer;width:100%;
+  position:relative;z-index:1;
+}
 
-  /* KPI Cards */
-  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-  .kpi-card{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden;}
-  .kpi-card::after{content:'';position:absolute;top:0;right:0;width:120px;height:120px;border-radius:50%;opacity:0;transition:opacity 0.3s;}
-  .kpi-card:nth-child(1)::after{background:radial-gradient(circle,rgba(13,148,136,0.15),transparent);}
-  .kpi-card:nth-child(2)::after{background:radial-gradient(circle,rgba(34,197,94,0.15),transparent);}
-  .kpi-card:nth-child(3)::after{background:radial-gradient(circle,rgba(59,130,246,0.15),transparent);}
-  .kpi-card:nth-child(4)::after{background:radial-gradient(circle,rgba(245,158,11,0.15),transparent);}
-  .kpi-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:var(--shadow);}
-  .kpi-card:hover::after{opacity:1;}
-  .kpi-card .label{font-size:12px;color:var(--text-muted);font-weight:500;margin-bottom:8px;letter-spacing:0.2px;}
-  .kpi-card .value{font-size:28px;font-weight:800;line-height:1.1;position:relative;z-index:1;}
-  .kpi-card .value.gradient-teal{background:linear-gradient(135deg,#0d9488,#14b8a6,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .kpi-card .value.gradient-green{background:linear-gradient(135deg,#16a34a,#22c55e,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .kpi-card .value.gradient-amber{background:linear-gradient(135deg,#d97706,#f59e0b,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .kpi-card .change{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;margin-top:6px;padding:3px 8px;border-radius:6px;}
-  .kpi-card .change.up{color:var(--green);background:rgba(34,197,94,0.1);}
-  .kpi-card .change.down{color:var(--red);background:rgba(239,68,68,0.1);}
-  .spark-row{display:flex;gap:3px;align-items:flex-end;height:28px;margin-top:8px;}
-  .spark-bar{flex:1;border-radius:3px;min-height:2px;transition:height 0.5s cubic-bezier(0.4,0,0.2,1);}
+/* === MAIN === */
+.main{display:flex;flex-direction:column;gap:14px;overflow-y:auto;padding-right:4px;}
 
-  /* AI Summary */
-  .ai-summary{background:linear-gradient(135deg,rgba(13,148,136,0.1) 0%,rgba(59,130,246,0.05) 50%,rgba(139,92,246,0.04) 100%);border:1px solid rgba(13,148,136,0.25);border-radius:16px;padding:24px 26px;margin-bottom:24px;position:relative;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 20px rgba(13,148,136,0.06);}
-  .ai-summary:hover{border-color:rgba(13,148,136,0.5);box-shadow:0 8px 30px rgba(13,148,136,0.1);}
-  .ai-summary.collapsed .ai-summary-body{display:none;}
-  .ai-summary::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--teal),var(--blue),var(--purple));border-radius:4px 0 0 4px;}
-  .ai-summary::after{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(13,148,136,0.08),transparent 70%);pointer-events:none;}
-  .ai-summary-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
-  .ai-summary.collapsed .ai-summary-header{margin-bottom:0;}
-  .ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(13,148,136,0.2),rgba(59,130,246,0.15));border:1px solid rgba(13,148,136,0.3);padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:600;color:var(--teal-light);letter-spacing:0.3px;}
-  .ai-badge .sparkle{font-size:13px;animation:sparkle-rotate 3s linear infinite;}
-  @keyframes sparkle-rotate{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-  .ai-summary-header .timestamp{font-size:11.5px;color:var(--text-muted);}
-  .ai-summary-header .toggle-icon{margin-left:auto;color:var(--text-muted);font-size:18px;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
-  .ai-summary.collapsed .toggle-icon{transform:rotate(-90deg);}
-  .ai-summary-text{font-size:14px;line-height:1.75;color:rgba(241,245,249,0.9);margin-bottom:16px;position:relative;z-index:1;}
-  .ai-summary-text strong{color:var(--teal-light);font-weight:700;}
-  .ai-typing{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px;}
-  .ai-typing i{width:5px;height:5px;background:var(--teal-light);border-radius:50%;display:inline-block;animation:typing 1.4s infinite;}
-  .ai-typing i:nth-child(2){animation-delay:0.2s;}
-  .ai-typing i:nth-child(3){animation-delay:0.4s;}
-  @keyframes typing{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1);}}
-  .ai-insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:1;}
-  .ai-insight{background:rgba(8,13,26,0.6);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all 0.2s;}
-  .ai-insight:hover{border-color:var(--teal);transform:translateY(-1px);box-shadow:var(--shadow);}
-  .ai-insight .icon{font-size:20px;margin-bottom:6px;}
-  .ai-insight .title{font-size:12.5px;font-weight:700;margin-bottom:4px;}
-  .ai-insight .desc{font-size:12px;color:var(--text-muted);line-height:1.55;}
-  .title.green{color:var(--green);}.title.amber{color:var(--amber);}.title.blue{color:var(--blue);}
+/* Top bar */
+.topbar{
+  background:var(--card);border-radius:var(--radius);
+  padding:12px 18px;display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow-sm);
+}
+.search{
+  flex:1;display:flex;align-items:center;gap:10px;
+  background:#f7f5f0;border-radius:10px;padding:10px 14px;
+  font-size:13.5px;color:var(--text-muted);
+}
+.search input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:inherit;font-size:13.5px;color:var(--text);
+}
+.search .kbd{
+  background:var(--card);padding:2px 8px;border-radius:6px;
+  font-size:11px;color:var(--text-muted);border:1px solid var(--border);
+}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;background:#f7f5f0;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);font-size:16px;
+  transition:all 0.15s;border:none;
+}
+.icon-btn:hover{background:var(--green-pale);color:var(--green-dark);}
+.user{display:flex;align-items:center;gap:10px;padding:0 4px;}
+.user-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:13px;
+}
+.user-info{font-size:13px;}
+.user-info .name{font-weight:700;}
+.user-info .email{color:var(--text-muted);font-size:11.5px;}
 
-  /* Charts */
-  .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px;}
-  .chart-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);}
-  .chart-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
-  .chart-card h3 .chart-toggle{display:flex;gap:4px;}
-  .chart-card h3 .chart-toggle button{background:var(--bg);border:1px solid var(--border);color:var(--text-muted);padding:5px 12px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all 0.2s;}
-  .chart-card h3 .chart-toggle button:hover{border-color:var(--text-muted);}
-  .chart-card h3 .chart-toggle button.active{background:var(--teal-glow);border-color:var(--teal);color:var(--teal-light);}
+/* Page card */
+.page-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:24px 28px;box-shadow:var(--shadow-sm);
+  flex:1;display:flex;flex-direction:column;gap:18px;
+}
+.page{display:none;flex-direction:column;gap:18px;}
+.page.active{display:flex;}
 
-  /* Table */
-  .table-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px;box-shadow:var(--shadow);}
-  .table-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
-  .table-card .search-box{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:12px;font-family:inherit;width:200px;outline:none;transition:border-color 0.15s;}
-  .table-card .search-box:focus{border-color:var(--teal);}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  thead th{text-align:left;padding:8px 10px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:color 0.15s;}
-  thead th:hover{color:var(--teal-light);}
-  thead th.sorted{color:var(--teal-light);}
-  tbody td{padding:10px;border-bottom:1px solid var(--border);}
-  tbody tr{cursor:pointer;transition:background 0.1s;}
-  tbody tr:hover{background:var(--teal-glow);}
-  tbody tr.selected{background:rgba(13,148,136,0.1);border-left:3px solid var(--teal);}
-  .badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;}
-  .badge.green{background:rgba(34,197,94,0.12);color:var(--green);}
-  .badge.amber{background:rgba(245,158,11,0.12);color:var(--amber);}
-  .badge.red{background:rgba(239,68,68,0.12);color:var(--red);}
-  .progress-bar{width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:8px;}
-  .progress-bar .fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+/* Page header */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.page-head h1{font-size:34px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;}
+.page-head .sub{font-size:14px;color:var(--text-muted);}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
-  /* Calls */
-  .calls-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .call-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card);transition:all 0.15s;cursor:pointer;}
-  .call-item:hover{border-color:var(--teal);background:var(--card-hover);}
-  .call-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-  .call-icon.booked{background:rgba(34,197,94,0.12);}.call-icon.missed{background:rgba(239,68,68,0.12);}.call-icon.info{background:rgba(59,130,246,0.12);}.call-icon.transferred{background:rgba(245,158,11,0.12);}
-  .call-meta{flex:1;}
-  .call-meta .top{display:flex;justify-content:space-between;align-items:center;}
-  .call-meta .name{font-weight:600;font-size:13px;}
-  .call-meta .time{font-size:11px;color:var(--text-muted);}
-  .call-meta .desc{font-size:12px;color:var(--text-muted);margin-top:2px;}
-  .call-meta .tags{display:flex;gap:4px;margin-top:4px;}
-  .call-meta .tag{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.btn{
+  font-family:inherit;font-size:14px;font-weight:600;
+  border-radius:999px;padding:11px 22px;cursor:pointer;border:none;
+  display:flex;align-items:center;gap:8px;transition:all 0.15s;
+}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 2px 6px rgba(45,122,79,0.3);}
+.btn-primary:hover{background:var(--green-dark);}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--green);color:var(--green-dark);background:var(--green-pale);}
 
-  /* Detail panel */
-  .detail-panel{position:fixed;right:-420px;top:60px;width:400px;height:calc(100vh - 60px);background:rgba(17,24,39,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-left:1px solid var(--border);padding:24px;overflow-y:auto;transition:right 0.35s cubic-bezier(0.4,0,0.2,1);z-index:5;box-shadow:-10px 0 40px rgba(0,0,0,0.4);}
-  .detail-panel.open{right:0;}
-  .detail-panel .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all 0.15s;}
-  .detail-panel .close-btn:hover{background:var(--bg);color:var(--text);}
-  .detail-panel h2{font-size:18px;font-weight:700;margin-bottom:4px;}
-  .detail-panel .detail-subtitle{color:var(--text-muted);font-size:13px;margin-bottom:20px;}
-  .detail-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
-  .detail-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;}
-  .detail-stat .label{font-size:11px;color:var(--text-muted);font-weight:500;}
-  .detail-stat .val{font-size:20px;font-weight:800;margin-top:2px;}
-  .detail-section{margin-bottom:16px;}
-  .detail-section h4{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-muted);}
-  .detail-call{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;margin-bottom:4px;background:var(--bg);font-size:12px;}
-  .detail-call .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.filter-select{
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--text);
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:999px;padding:9px 16px;cursor:pointer;outline:none;
+}
+.filter-select:focus{border-color:var(--green);}
 
-  /* Pages (hidden by default) */
-  .page{display:none;}
-  .page.active{display:block;}
+/* === KPI CARDS === */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{
+  background:var(--card-soft);border:1px solid var(--border);
+  border-radius:14px;padding:18px 20px;
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;cursor:pointer;transition:all 0.15s;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.kpi.featured{
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  color:#fff;border:none;
+}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.kpi-label{font-size:14px;font-weight:600;color:var(--text-muted);}
+.kpi.featured .kpi-label{color:rgba(255,255,255,0.85);}
+.kpi-arrow{
+  width:32px;height:32px;border-radius:50%;
+  background:#fff;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:14px;
+}
+.kpi.featured .kpi-arrow{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.2);color:#fff;}
+.kpi-num{font-size:46px;font-weight:700;letter-spacing:-2px;line-height:1;}
+.kpi.featured .kpi-num{color:#fff;}
+.kpi-foot{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+.kpi.featured .kpi-foot{color:rgba(255,255,255,0.75);}
+.kpi-foot .delta{
+  background:#dcefe4;color:var(--green-dark);
+  padding:2px 7px;border-radius:6px;font-weight:700;font-size:11px;
+}
+.kpi.featured .kpi-foot .delta{background:rgba(255,255,255,0.18);color:#fff;}
 
-  /* Booking page */
-  .booking-list{display:flex;flex-direction:column;gap:8px;}
-  .booking-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;transition:all 0.15s;cursor:pointer;}
-  .booking-item:hover{border-color:var(--teal);}
-  .booking-left{display:flex;align-items:center;gap:12px;}
-  .booking-time{font-size:13px;font-weight:700;color:var(--teal-light);min-width:50px;}
-  .booking-info .booking-name{font-weight:600;font-size:13.5px;}
-  .booking-info .booking-service{font-size:12px;color:var(--text-muted);}
-  .booking-loc{font-size:12px;color:var(--text-muted);text-align:right;}
+/* === GRID ROWS === */
+.grid-main{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:14px;}
+.grid-bottom{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:14px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 
-  /* Samtaler page */
-  .transcript-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;}
-  .transcript-card:hover{border-color:var(--teal);}
-  .transcript-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-  .transcript-header .caller{font-weight:600;font-size:14px;}
-  .transcript-header .dur{font-size:12px;color:var(--text-muted);}
-  .transcript-body{font-size:12.5px;color:var(--text-muted);line-height:1.6;}
-  .transcript-body .ai{color:var(--teal-light);}
-  .transcript-body .human{color:var(--text);}
-  .transcript-tags{display:flex;gap:6px;margin-top:8px;}
+.card{
+  background:var(--card-soft);border:1px solid var(--border);
+  border-radius:14px;padding:20px 22px;
+}
+.card h3{
+  font-size:18px;font-weight:700;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.card h3 .count-pill{
+  background:var(--green-pale);color:var(--green-dark);
+  font-size:11px;padding:3px 10px;border-radius:999px;font-weight:700;
+}
+.card h3 .new-btn{
+  background:#fff;border:1.5px solid var(--border);
+  padding:5px 14px;border-radius:999px;
+  font-family:inherit;font-size:12px;font-weight:600;color:var(--text);
+  cursor:pointer;display:flex;align-items:center;gap:4px;
+}
 
-  /* Settings page */
-  .settings-group{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow);}
-  .settings-group h3{font-size:14px;font-weight:600;margin-bottom:14px;}
-  .setting-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
-  .setting-row:last-child{border-bottom:none;}
-  .setting-label{font-size:13px;}
-  .setting-label .hint{font-size:11.5px;color:var(--text-muted);display:block;margin-top:2px;}
-  .toggle{width:42px;height:24px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);}
-  .toggle.on{background:linear-gradient(135deg,var(--teal),var(--teal-light));box-shadow:0 0 12px rgba(13,148,136,0.3);}
-  .toggle .knob{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.25s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 4px rgba(0,0,0,0.2);}
-  .toggle.on .knob{left:21px;}
+/* Chart pill bars */
+.chart-pills{
+  display:flex;align-items:flex-end;gap:18px;
+  height:220px;padding:30px 4px 0;position:relative;
+}
+.pill-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;height:100%;}
+.pill{width:36px;border-radius:18px;position:relative;transition:all 0.3s;flex-shrink:0;min-height:8px;}
+.pill.active{background:linear-gradient(180deg,#7dd3a3,var(--green));}
+.pill.dark{background:var(--green-dark);}
+.pill.muted{background:repeating-linear-gradient(135deg,#e8e5dd 0 4px,#f0eee8 4px 8px);}
+.pill-label{font-size:12px;color:var(--text-muted);font-weight:500;}
+.pill-value{
+  position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  background:#fff;padding:3px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;color:var(--text);
+  border:1px solid var(--border);white-space:nowrap;
+  box-shadow:var(--shadow-sm);
+}
 
-  /* Empty state */
-  .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
-  .empty-state .icon{font-size:48px;margin-bottom:12px;}
-  .empty-state p{font-size:14px;}
+/* Live samtale card */
+.live-card{display:flex;flex-direction:column;gap:12px;}
+.live-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--red-pale);color:var(--red);
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:700;width:fit-content;
+}
+.live-tag .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--red);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.live-card h4{font-size:18px;font-weight:700;line-height:1.3;}
+.live-card .meta{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.live-card .meta strong{color:var(--text);font-weight:600;}
+.live-card .timer-row{display:flex;align-items:center;gap:10px;font-size:13px;}
+.live-card .timer{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--red);font-size:15px;}
+.live-card .live-wave{display:flex;align-items:flex-end;gap:2px;height:18px;}
+.live-card .live-wave .b{width:3px;background:var(--red);border-radius:2px;animation:livewave 0.9s ease-in-out infinite;}
+.live-card .live-wave .b:nth-child(1){height:30%;}
+.live-card .live-wave .b:nth-child(2){height:60%;animation-delay:0.1s;}
+.live-card .live-wave .b:nth-child(3){height:90%;animation-delay:0.2s;}
+.live-card .live-wave .b:nth-child(4){height:50%;animation-delay:0.3s;}
+.live-card .live-wave .b:nth-child(5){height:75%;animation-delay:0.4s;}
+@keyframes livewave{0%,100%{transform:scaleY(0.4);}50%{transform:scaleY(1);}}
+.live-actions{display:flex;gap:8px;margin-top:6px;}
+.live-btn{
+  background:var(--card);border:1.5px solid var(--border);
+  padding:9px 14px;border-radius:999px;
+  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--text);
+  cursor:pointer;flex:1;
+}
+.live-btn:hover{border-color:var(--green);color:var(--green-dark);}
+.live-btn.primary{background:var(--green);color:#fff;border-color:var(--green);}
+.live-btn.primary:hover{background:var(--green-dark);}
 
-  /* Notification toast */
-  .toast{position:fixed;bottom:-60px;left:50%;transform:translateX(-50%);background:rgba(17,24,39,0.95);backdrop-filter:blur(20px);border:1px solid rgba(13,148,136,0.4);color:var(--text);padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;z-index:100;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 20px rgba(13,148,136,0.1);}
-  .toast.show{bottom:24px;}
-  .toast .toast-icon{margin-right:8px;}
+/* Project list / Sjefens fokus */
+.proj-list{display:flex;flex-direction:column;gap:14px;}
+.proj-item{display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all 0.15s;padding:6px;border-radius:10px;margin:-6px;}
+.proj-item:hover{background:#fff;}
+.proj-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.proj-icon.win{background:var(--green-pale);}
+.proj-icon.risk{background:var(--amber-pale);}
+.proj-icon.opp{background:var(--blue-pale);}
+.proj-icon.bolt{background:var(--purple-pale);}
+.proj-text{flex:1;min-width:0;}
+.proj-text .title{font-size:13.5px;font-weight:600;line-height:1.3;}
+.proj-text .due{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
 
-  /* Report cards */
-  .report-card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.2s;}
-  .report-card:hover{border-color:var(--teal);background:var(--card-hover);transform:translateX(4px);box-shadow:var(--shadow);}
-  .report-left{display:flex;align-items:center;gap:14px;}
-  .report-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-  .report-icon.weekly{background:rgba(13,148,136,0.12);}
-  .report-icon.monthly{background:rgba(139,92,246,0.12);}
-  .report-info .report-title{font-weight:600;font-size:14px;}
-  .report-info .report-meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
-  .report-badge{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:600;}
-  .report-badge.new{background:rgba(34,197,94,0.12);color:var(--green);}
-  .report-badge.read{background:var(--bg);color:var(--text-muted);}
+/* Calls list / Team Collaboration */
+.calls-list{display:flex;flex-direction:column;gap:8px;}
+.call-row{display:flex;align-items:center;gap:12px;padding:8px 0;cursor:pointer;}
+.call-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.call-info{flex:1;min-width:0;}
+.call-info .name{font-size:14px;font-weight:600;}
+.call-info .desc{font-size:12px;color:var(--text-muted);margin-top:1px;}
+.call-info .desc strong{color:var(--text);font-weight:600;}
+.call-status{font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;}
+.call-status.booked{background:var(--green-pale);color:var(--green-dark);}
+.call-status.info{background:var(--amber-pale);color:#92400e;}
+.call-status.transfer{background:var(--red-pale);color:var(--red);}
 
-  /* Customer detail */
-  .customer-stat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);}
-  .customer-stat .dot{width:8px;height:8px;border-radius:50%;}
+/* Gauge / progress */
+.gauge{width:200px;height:120px;margin:10px auto 0;position:relative;}
+.gauge svg{width:100%;height:100%;}
+.gauge-text{position:absolute;bottom:0;left:50%;transform:translateX(-50%);text-align:center;}
+.gauge-text .pct{font-size:32px;font-weight:800;letter-spacing:-1px;}
+.gauge-text .lbl{font-size:11px;color:var(--text-muted);}
+.legend{display:flex;justify-content:center;gap:12px;margin-top:14px;font-size:11px;flex-wrap:wrap;}
+.legend .key{display:flex;align-items:center;gap:5px;color:var(--text-muted);}
+.legend .key .sw{width:10px;height:10px;border-radius:3px;}
 
-  @media(max-width:1100px){
-    .kpi-row{grid-template-columns:repeat(2,1fr);}
-    .chart-grid{grid-template-columns:1fr;}
-    .calls-grid{grid-template-columns:1fr;}
-    .sidebar{display:none;}
-    .ai-insights{grid-template-columns:1fr;}
-    .main{padding:16px;}
-    .page-header{flex-direction:column;gap:12px;}
-    .filters{flex-wrap:wrap;}
-    .detail-panel{width:100%;right:-100%;}
-    .detail-panel.open{right:0;}
-    .topnav{padding:12px 16px;}
-    .topnav .right span:not(:last-child){display:none;}
-  }
-  @media(max-width:600px){
-    .kpi-row{grid-template-columns:1fr;}
-    .kpi-card .value{font-size:22px;}
-    .table-card{overflow-x:auto;}
-    table{min-width:500px;}
-    .topnav .logo span{font-size:15px;}
-  }
+/* Tracker (dark) */
+.tracker{
+  background:linear-gradient(135deg,#0f3a23,#1f5135);
+  border-radius:14px;padding:20px 22px;color:#fff;
+  position:relative;overflow:hidden;
+}
+.tracker::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 90% 80%,rgba(111,207,151,0.18),transparent 60%),
+             radial-gradient(circle at 10% 10%,rgba(255,255,255,0.05),transparent 60%);
+}
+.tracker-content{position:relative;z-index:1;}
+.tracker h3{color:#fff;}
+.tracker .display{font-size:38px;font-weight:700;letter-spacing:-1px;margin:8px 0 4px;font-variant-numeric:tabular-nums;font-family:'JetBrains Mono',monospace;}
+.tracker .display-label{font-size:12px;opacity:0.7;}
+.tracker .ai-detail{font-size:11.5px;opacity:0.7;margin-top:14px;line-height:1.5;}
+.tracker .controls{display:flex;gap:10px;margin-top:14px;}
+.tracker .control{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,0.1);border:none;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;cursor:pointer;transition:all 0.15s;
+}
+.tracker .control:hover{background:rgba(255,255,255,0.2);}
+.tracker .control.stop{background:#ef4444;}
+
+/* === TABLES === */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  text-align:left;padding:10px 12px;
+  color:var(--text-muted);font-weight:600;
+  font-size:11px;text-transform:uppercase;letter-spacing:0.5px;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+thead th:hover{color:var(--text);}
+thead th.sorted{color:var(--green);}
+tbody td{padding:12px;border-bottom:1px solid var(--border);}
+tbody tr{cursor:pointer;transition:background 0.1s;}
+tbody tr:hover{background:#f7f5f0;}
+.badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;}
+.badge.green{background:var(--green-pale);color:var(--green-dark);}
+.badge.amber{background:var(--amber-pale);color:#92400e;}
+
+/* Funnel */
+.funnel-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.funnel-label{font-size:13px;font-weight:600;min-width:160px;color:var(--text);}
+.funnel-bar{flex:1;height:36px;background:#e8e5dd;border-radius:8px;overflow:hidden;position:relative;}
+.funnel-fill{height:100%;display:flex;align-items:center;padding:0 12px;color:#fff;font-size:13px;font-weight:700;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+.funnel-fill.s1{background:linear-gradient(90deg,#7dd3a3,var(--green));}
+.funnel-fill.s2{background:linear-gradient(90deg,var(--green),#4cb37a);}
+.funnel-fill.s3{background:linear-gradient(90deg,#4cb37a,#3b82f6);}
+.funnel-fill.s4{background:linear-gradient(90deg,var(--green),var(--green-dark));}
+.funnel-pct{font-size:12px;color:var(--text-muted);min-width:90px;text-align:right;font-variant-numeric:tabular-nums;}
+.funnel-pct .drop{color:var(--red);margin-left:4px;}
+
+/* Top questions */
+.question-item{
+  display:grid;grid-template-columns:24px 1fr 120px 50px 50px;
+  gap:14px;align-items:center;padding:11px 0;
+  border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background 0.12s;
+}
+.question-item:last-child{border-bottom:none;}
+.question-item:hover{background:#f7f5f0;border-radius:8px;padding-left:8px;padding-right:8px;}
+.question-rank{font-size:13px;color:var(--text-muted);font-weight:700;}
+.question-rank.top{color:var(--green);}
+.question-text{font-size:13.5px;color:var(--text);}
+.question-bar-wrap{height:6px;background:#e8e5dd;border-radius:3px;overflow:hidden;}
+.question-bar{height:100%;background:linear-gradient(90deg,#7dd3a3,var(--green));border-radius:3px;}
+.question-count{font-size:13px;font-weight:700;text-align:right;}
+.question-trend{font-size:11px;color:var(--text-muted);text-align:right;}
+.question-trend.up{color:var(--green);}
+.question-trend.down{color:var(--red);}
+
+/* AI log */
+.ai-log-item{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--border);}
+.ai-log-item:last-child{border-bottom:none;}
+.ai-log-time{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;min-width:110px;padding-top:2px;}
+.ai-log-content .event{font-size:13px;font-weight:700;color:var(--green);margin-bottom:2px;}
+.ai-log-content .detail{font-size:12.5px;color:var(--text-muted);line-height:1.5;}
+
+/* Booking list */
+.booking-list{display:flex;flex-direction:column;gap:8px;}
+.booking-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:all 0.15s;
+}
+.booking-item:hover{border-color:var(--green);}
+.booking-left{display:flex;align-items:center;gap:14px;}
+.booking-time{font-size:14px;font-weight:700;color:var(--green);min-width:60px;font-family:'JetBrains Mono',monospace;}
+.booking-name{font-weight:600;font-size:14px;}
+.booking-service{font-size:12px;color:var(--text-muted);}
+.booking-loc{font-size:12px;color:var(--text-muted);}
+
+/* Transcripts */
+.transcript-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px 20px;margin-bottom:10px;
+  cursor:pointer;transition:all 0.15s;
+}
+.transcript-card:hover{border-color:var(--green);}
+.transcript-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.transcript-header .caller{font-weight:600;font-size:14px;}
+.transcript-header .dur{font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.transcript-body{font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-bottom:10px;}
+.transcript-body .ai{color:var(--green);}
+.transcript-body .human{color:var(--text);}
+.transcript-tags{display:flex;gap:6px;}
+.transcript-tags .tag{font-size:11px;padding:3px 10px;border-radius:6px;background:#f7f5f0;color:var(--text-muted);}
+
+/* Audio bar */
+.audio-bar{
+  display:flex;align-items:center;gap:12px;
+  background:#f7f5f0;border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;margin:8px 0;
+  cursor:pointer;transition:all 0.15s;
+}
+.audio-bar:hover{border-color:var(--green);}
+.audio-bar .play-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--green);color:white;border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;flex-shrink:0;
+}
+.audio-bar.playing .play-btn{background:var(--red);}
+.audio-waveform{flex:1;display:flex;align-items:center;gap:2px;height:24px;}
+.audio-waveform .wb{width:3px;background:var(--text-muted);border-radius:2px;opacity:0.4;}
+.audio-bar.playing .audio-waveform .wb.played{background:var(--green);opacity:1;}
+.audio-bar .audio-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);min-width:80px;text-align:right;}
+
+/* Settings */
+.settings-group{
+  background:var(--card-soft);border:1px solid var(--border);
+  border-radius:14px;padding:22px 24px;margin-bottom:14px;
+}
+.settings-group h3{font-size:18px;font-weight:700;margin-bottom:14px;}
+.setting-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:14px;}
+.setting-label .hint{font-size:12px;color:var(--text-muted);display:block;margin-top:2px;}
+.toggle{
+  width:44px;height:26px;background:#e8e5dd;border-radius:13px;
+  position:relative;cursor:pointer;transition:all 0.25s;
+}
+.toggle.on{background:linear-gradient(135deg,var(--green),#4cb37a);}
+.toggle .knob{
+  width:20px;height:20px;background:#fff;border-radius:50%;
+  position:absolute;top:3px;left:3px;
+  transition:left 0.25s;box-shadow:0 2px 4px rgba(0,0,0,0.15);
+}
+.toggle.on .knob{left:21px;}
+
+/* Reports */
+.report-row{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:18px 22px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;transition:all 0.15s;
+}
+.report-row:hover{border-color:var(--green);transform:translateX(2px);}
+.report-row-left{display:flex;align-items:center;gap:14px;}
+.report-row-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.report-row-icon.weekly{background:var(--green-pale);}
+.report-row-icon.monthly{background:var(--purple-pale);}
+.report-row-info .title{font-weight:600;font-size:14px;}
+.report-row-info .meta{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.report-row-badge{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:700;}
+.report-row-badge.new{background:var(--green-pale);color:var(--green-dark);}
+.report-row-badge.read{background:#f7f5f0;color:var(--text-muted);}
+
+/* === DETAIL PANEL === */
+.detail-panel{
+  position:fixed;right:-440px;top:14px;
+  width:420px;height:calc(100vh - 28px);
+  background:var(--card);border-radius:var(--radius);
+  padding:24px 26px;overflow-y:auto;
+  transition:right 0.35s cubic-bezier(0.4,0,0.2,1);
+  z-index:50;box-shadow:-10px 0 40px rgba(0,0,0,0.1);
+}
+.detail-panel.open{right:14px;}
+.detail-panel .close-btn{
+  position:absolute;top:18px;right:18px;
+  background:#f7f5f0;border:none;width:32px;height:32px;border-radius:50%;
+  color:var(--text-muted);font-size:16px;cursor:pointer;
+}
+.detail-panel .close-btn:hover{background:var(--green-pale);color:var(--green-dark);}
+.detail-panel h2{font-size:22px;font-weight:700;margin-bottom:6px;}
+.detail-panel .detail-subtitle{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.detail-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.detail-stat{background:#fafaf7;border:1px solid var(--border);border-radius:10px;padding:12px;}
+.detail-stat .label{font-size:11px;color:var(--text-muted);font-weight:500;}
+.detail-stat .val{font-size:20px;font-weight:800;margin-top:2px;}
+.detail-section{margin-bottom:16px;}
+.detail-section h4{font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+.detail-call{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:4px;background:#fafaf7;font-size:12.5px;}
+
+/* === REPORT MODAL === */
+.report-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;}
+.report-overlay.open{display:flex;}
+.report-modal{background:#fff;color:#1a1a1a;width:100%;max-width:820px;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,0.3);overflow:hidden;font-family:'Outfit',sans-serif;}
+.report-modal-actions{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;z-index:10;}
+.report-modal-actions .left-meta{font-size:13px;color:var(--text-muted);font-weight:500;}
+.report-modal-actions .actions{display:flex;gap:8px;}
+.report-action-btn{padding:8px 16px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;}
+.report-action-btn.primary{background:var(--green);color:#fff;}
+.report-action-btn.primary:hover{background:var(--green-dark);}
+.report-action-btn.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);}
+.report-action-btn.ghost:hover{background:#f7f5f0;}
+.report-doc{padding:40px 50px;}
+.report-doc-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a1a1a;padding-bottom:18px;margin-bottom:24px;}
+.report-brand{display:flex;align-items:center;gap:10px;}
+.report-brand-logo{width:36px;height:36px;background:linear-gradient(135deg,#dc2626,#f59e0b);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;}
+.report-brand-name{font-weight:800;font-size:18px;}
+.report-brand-tag{color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.report-doc h1{font-size:28px;font-weight:800;margin-bottom:6px;}
+.report-doc h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin:24px 0 12px;}
+.report-doc .period{color:var(--text-muted);font-size:14px;margin-bottom:24px;}
+.report-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.report-stat{background:#fafaf7;border:1px solid var(--border);border-radius:10px;padding:14px;}
+.report-stat .label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.report-stat .value{font-size:24px;font-weight:800;margin-top:4px;}
+.report-stat .delta{font-size:11px;color:var(--green);font-weight:600;margin-top:2px;}
+.report-summary{background:var(--green-pale);border-left:4px solid var(--green);padding:16px 18px;border-radius:0 8px 8px 0;font-size:14px;line-height:1.65;margin-bottom:14px;}
+.report-summary strong{color:var(--green-dark);}
+.report-list{list-style:none;padding:0;}
+.report-list li{padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;display:flex;justify-content:space-between;align-items:center;}
+.report-list li:last-child{border-bottom:none;}
+.report-list .left{display:flex;align-items:center;gap:10px;}
+.report-list .rank{color:var(--text-muted);font-weight:700;width:20px;}
+.report-list .rank.top{color:var(--green);}
+.report-list .name{font-weight:600;}
+.report-list .right-val{color:var(--green);font-weight:700;}
+.report-doc table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+.report-doc table th{text-align:left;padding:8px 10px;border-bottom:2px solid #1a1a1a;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;}
+.report-doc table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.report-action-callout{background:var(--amber-pale);border:1px solid #fde68a;border-radius:10px;padding:14px 18px;margin-top:12px;}
+.report-action-callout strong{color:#b45309;}
+.report-doc .footer-note{margin-top:30px;padding-top:18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-light);text-align:center;}
+
+/* Print */
+@media print {
+  body * { visibility: hidden; }
+  .report-overlay, .report-overlay * { visibility: visible; }
+  .report-overlay { position: absolute; inset: 0; padding: 0; background: white; backdrop-filter: none; }
+  .report-modal { box-shadow: none; max-width: 100%; border-radius: 0; }
+  .report-modal-actions { display: none; }
+  .report-doc { padding: 24px 32px; }
+  @page { margin: 12mm; size: A4; }
+}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:-60px;left:50%;transform:translateX(-50%);
+  background:#1a1a1a;color:#fff;
+  padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:300;
+  transition:bottom 0.3s;box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+.toast.show{bottom:24px;}
+
+/* Empty state */
+.empty{text-align:center;padding:60px 20px;color:var(--text-muted);}
+.empty h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;}
+
+/* === SEARCH RESULTS DROPDOWN === */
+.search{position:relative;}
+.search-results{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:#fff;border-radius:14px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.15);
+  border:1px solid var(--border);
+  padding:8px 0;max-height:480px;overflow-y:auto;
+  z-index:80;display:none;
+}
+.search-results.open{display:block;}
+.search-group{padding:6px 0;}
+.search-group-label{
+  font-size:10px;color:var(--text-muted);text-transform:uppercase;
+  padding:4px 16px 6px;font-weight:700;letter-spacing:0.6px;
+}
+.search-result{
+  padding:9px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;
+  transition:background 0.1s;
+}
+.search-result:hover{background:#f7f5f0;}
+.search-result-icon{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;flex-shrink:0;
+  background:linear-gradient(135deg,#a78bfa,#8b5cf6);
+}
+.search-result-icon.cust{background:linear-gradient(135deg,#fb923c,#f97316);}
+.search-result-icon.loc{background:linear-gradient(135deg,#60a5fa,#3b82f6);}
+.search-result-icon.book{background:linear-gradient(135deg,#34d399,#10b981);}
+.search-result-icon.transc{background:linear-gradient(135deg,#a78bfa,#8b5cf6);}
+.search-result-info{flex:1;min-width:0;}
+.search-result-name{font-size:13.5px;font-weight:600;color:var(--text);}
+.search-result-meta{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.search-result-pill{
+  font-size:10px;color:var(--text-muted);
+  background:#f7f5f0;padding:3px 8px;border-radius:6px;
+  font-weight:600;
+}
+.search-empty{padding:24px;text-align:center;color:var(--text-muted);font-size:13px;}
+.search-empty-tip{font-size:11px;margin-top:6px;opacity:0.7;}
+
+/* === NOTIFICATIONS DROPDOWN === */
+.notif-wrap{position:relative;}
+.notif-badge{
+  position:absolute;top:4px;right:4px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--red);border:2px solid var(--card);
+  pointer-events:none;
+}
+.notif-panel{
+  position:absolute;top:calc(100% + 6px);right:0;
+  width:380px;background:#fff;border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:0 12px 40px rgba(0,0,0,0.12);
+  z-index:80;display:none;overflow:hidden;
+}
+.notif-panel.open{display:block;}
+.notif-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+}
+.notif-header h4{font-size:15px;font-weight:700;}
+.notif-header .clear{
+  background:none;border:none;color:var(--text-muted);
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+}
+.notif-header .clear:hover{color:var(--green);}
+.notif-list{max-height:420px;overflow-y:auto;}
+.notif-item{
+  display:flex;gap:12px;padding:12px 18px;
+  cursor:pointer;border-bottom:1px solid var(--border);
+  transition:background 0.1s;
+}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:#f7f5f0;}
+.notif-item.unread{background:#fafff7;}
+.notif-item.unread:hover{background:#f0fdf2;}
+.notif-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.notif-icon.success{background:var(--green-pale);}
+.notif-icon.warn{background:var(--amber-pale);}
+.notif-icon.info{background:var(--blue-pale);}
+.notif-icon.message{background:var(--purple-pale);}
+.notif-info{flex:1;min-width:0;}
+.notif-info .title{font-size:13px;font-weight:600;line-height:1.3;}
+.notif-info .desc{font-size:12px;color:var(--text-muted);margin-top:2px;line-height:1.4;}
+.notif-info .time{font-size:11px;color:var(--text-light);margin-top:4px;}
+.notif-footer{
+  padding:10px 18px;text-align:center;
+  border-top:1px solid var(--border);
+}
+.notif-footer a{
+  color:var(--green);font-size:12.5px;font-weight:600;
+  text-decoration:none;cursor:pointer;
+}
+
+@media(max-width:1200px){
+  .grid-main, .grid-bottom, .grid-3{grid-template-columns:1fr;}
+  .grid-2{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
+<div class="app">
 
-<nav class="topnav">
-  <div class="logo">
-    <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="url(#lg)"/><defs><linearGradient id="lg" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#0d9488"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs><text x="20" y="27" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="22" fill="#fff">A</text></svg>
-    <span>Arxon <span style="color:var(--text-muted);font-weight:400;">×</span> <svg style="vertical-align:middle;margin:0 2px" width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" fill="#1a3a5c"/><text x="20" y="26" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="16" fill="#4db8ff">H</text></svg>Handz On</span>
-  </div>
-  <div class="right">
-    <span><span class="live-dot"></span>&nbsp; AI aktiv — alle 14 lokasjoner</span>
-    <span style="color:var(--text-muted);">|</span>
-    <span>Fre 28. mars 2026</span>
-    <div class="avatar" title="Ove Hagen">OH</div>
-  </div>
-</nav>
-
-<div class="layout">
-<aside class="sidebar">
-  <div class="section-label">Hovedmeny</div>
-  <a data-page="oversikt" class="active" onclick="switchPage('oversikt',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    Oversikt
-  </a>
-  <a data-page="samtaler" onclick="switchPage('samtaler',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-    Samtaler
-  </a>
-  <a data-page="bookinger" onclick="switchPage('bookinger',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Bookinger
-    <span style="margin-left:auto;background:var(--teal-glow);color:var(--teal-light);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:700;">12</span>
-  </a>
-  <a data-page="lokasjoner" onclick="switchPage('lokasjoner',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    Lokasjoner
-  </a>
-  <div class="sep"></div>
-  <div class="section-label">Verktøy</div>
-  <a data-page="kunder" onclick="switchPage('kunder',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    Kunder
-  </a>
-  <a data-page="rapporter" onclick="switchPage('rapporter',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    Rapporter
-  </a>
-  <div class="sep"></div>
-  <a data-page="innstillinger" onclick="switchPage('innstillinger',this)">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-    Innstillinger
-  </a>
-</aside>
-
-<main class="main">
-
-<!-- ==================== OVERSIKT ==================== -->
-<div id="page-oversikt" class="page active">
-  <div class="page-header">
-    <div>
-      <h1>Dashboard</h1>
-      <p class="subtitle">Sanntidsoversikt over alle 14 lokasjoner</p>
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">M</div>
+      <div><div class="brand-name">Mekkern</div><div class="brand-sub" style="font-size:11px;margin-top:-2px;">Bilverksted</div></div>
     </div>
-    <div class="filters">
-      <select id="locationFilter" onchange="filterData()">
-        <option value="all">Alle lokasjoner</option>
-      </select>
-      <select id="timeFilter" onchange="filterData()">
-        <option value="7d">Siste 7 dager</option>
-        <option value="today">I dag</option>
-        <option value="30d">Siste 30 dager</option>
-        <option value="month">Denne måneden</option>
-      </select>
+    <div class="nav">
+      <div class="nav-label">Meny</div>
+      <a class="active" data-page="oversikt" onclick="switchPage('oversikt',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Oversikt
+      </a>
+      <a data-page="innsikt" onclick="switchPage('innsikt',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+        Innsikt
+      </a>
+      <a data-page="samtaler" onclick="switchPage('samtaler',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Samtaler <span class="badge">12+</span>
+      </a>
+      <a data-page="bookinger" onclick="switchPage('bookinger',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+        Bookinger
+      </a>
+      <a data-page="lokasjoner" onclick="switchPage('lokasjoner',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Lokasjoner
+      </a>
+      <div class="nav-label" style="margin-top:14px;">Verktøy</div>
+      <a data-page="kunder" onclick="switchPage('kunder',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Kunder
+      </a>
+      <a data-page="rapporter" onclick="switchPage('rapporter',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Rapporter
+      </a>
+      <a data-page="innstillinger" onclick="switchPage('innstillinger',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06A1.65 1.65 0 0015 19.4 1.65 1.65 0 0014 21H10a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 005 14.6 1.65 1.65 0 003.51 14H3a2 2 0 010-4h.51A1.65 1.65 0 005 9.4 1.65 1.65 0 004.6 7.58l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009.4 5 1.65 1.65 0 0010 3.51V3a2 2 0 014 0v.51A1.65 1.65 0 0014.6 5a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019 9.4 1.65 1.65 0 0020.49 10H21a2 2 0 010 4h-.51a1.65 1.65 0 00-1.51 1z"/></svg>
+        Innstillinger
+      </a>
     </div>
-  </div>
 
-  <div class="kpi-row" id="kpiRow"></div>
-
-  <div class="ai-summary" id="aiSummary" onclick="toggleAiSummary()">
-    <div class="ai-summary-header">
-      <span class="ai-badge"><span class="sparkle">✦</span> AI-oppsummering</span>
-      <span class="timestamp">Generert nå — basert på valgt periode</span>
-      <span class="toggle-icon">▾</span>
+    <div class="promo">
+      <div class="promo-icon">📱</div>
+      <h4>Last ned<br>mobil-appen</h4>
+      <p>Få varslinger på telefonen</p>
+      <button onclick="showToast('Sendt lenke til SMS')">Last ned</button>
     </div>
-    <div class="ai-summary-body">
-      <div class="ai-summary-text" id="aiText"></div>
-      <div class="ai-insights" id="aiInsights"></div>
-    </div>
-  </div>
+  </aside>
 
-  <div class="chart-grid">
-    <div class="chart-card">
-      <h3>
-        Anrop og bookinger
-        <div class="chart-toggle">
-          <button class="active" onclick="setChartType('bar',this)">Stolpe</button>
-          <button onclick="setChartType('line',this)">Linje</button>
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="search">
+        <span style="font-size:16px;">🔍</span>
+        <input placeholder="Søk samtale, kunde, lokasjon..." />
+        <span class="kbd">⌘ F</span>
+      </div>
+      <button class="icon-btn" onclick="showToast('Ingen ulest e-post')">✉️</button>
+      <div class="notif-wrap">
+        <button class="icon-btn" onclick="toggleNotifs(event)">🔔</button>
+        <span class="notif-badge" id="notifBadge"></span>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-header">
+            <h4>Varsler <span style="font-size:11px;background:var(--red-pale);color:var(--red);padding:2px 8px;border-radius:8px;font-weight:700;margin-left:4px;">3 nye</span></h4>
+            <button class="clear" onclick="clearNotifs(event)">Marker alle som lest</button>
+          </div>
+          <div class="notif-list" id="notifList"></div>
+          <div class="notif-footer"><a onclick="showToast('Åpner alle varsler')">Se alle varsler →</a></div>
         </div>
-      </h3>
-      <canvas id="weekChart" height="200"></canvas>
+      </div>
+      <div class="user">
+        <div class="user-avatar">LS</div>
+        <div class="user-info">
+          <div class="name">Lars Strøm</div>
+          <div class="email">lars@mekkern.no</div>
+        </div>
+      </div>
     </div>
-    <div class="chart-card">
-      <h3>Samtalekategori</h3>
-      <canvas id="categoryChart" height="200"></canvas>
+
+    <!-- Page card -->
+    <div class="page-card">
+
+      <!-- ==================== OVERSIKT ==================== -->
+      <div id="page-oversikt" class="page active">
+        <div class="page-head">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="sub">Sanntidsoversikt over alle 8 lokasjoner — Fre 24. apr 2026</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-primary" onclick="generateReport('week')"><span>＋</span> Ukerapport</button>
+            <button class="btn btn-outline" onclick="generateReport('month')">Månedsrapport</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-row" id="kpiRow"></div>
+
+        <!-- Row 2: Chart | Live | Sjefens fokus -->
+        <div class="grid-main">
+          <div class="card">
+            <h3>Anrop denne uka</h3>
+            <div class="chart-pills">
+              <div class="pill-col"><div class="pill muted" style="height:50%"></div><div class="pill-label">Søn</div></div>
+              <div class="pill-col"><div class="pill active" style="height:65%"></div><div class="pill-label">Man</div></div>
+              <div class="pill-col"><div class="pill active" style="height:70%"></div><div class="pill-label">Tir</div></div>
+              <div class="pill-col"><div class="pill" style="background:#7dd3a3;height:74%;position:relative;"><div class="pill-value">74%</div></div><div class="pill-label">Ons</div></div>
+              <div class="pill-col"><div class="pill dark" style="height:88%"></div><div class="pill-label">Tor</div></div>
+              <div class="pill-col"><div class="pill muted" style="height:55%"></div><div class="pill-label">Fre</div></div>
+              <div class="pill-col"><div class="pill muted" style="height:45%"></div><div class="pill-label">Lør</div></div>
+            </div>
+          </div>
+
+          <div class="card live-card">
+            <div class="live-tag"><span class="dot"></span> Live samtale</div>
+            <h4>Pågående anrop på Tveita</h4>
+            <p class="meta"><strong>+47 924 56 ●●●</strong><br>AI svarer på prisspørsmål om bremseskift</p>
+            <div class="timer-row">
+              <span class="timer" id="liveTimer">0:36</span>
+              <div class="live-wave"><span class="b"></span><span class="b"></span><span class="b"></span><span class="b"></span><span class="b"></span></div>
+            </div>
+            <div class="live-actions">
+              <button class="live-btn" onclick="showToast('🎧 Lytter live på samtale fra Tveita...')">🎧 Lytt live</button>
+              <button class="live-btn primary" onclick="showToast('Samtalen er overført til mobilen din')">Ta over</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Sjefens fokus <span class="count-pill">4</span></h3>
+            <div class="proj-list" id="focusList"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: Siste samtaler | Konvertering | AI-aktivitet -->
+        <div class="grid-bottom">
+          <div class="card">
+            <h3>Siste samtaler <button class="new-btn" onclick="switchPage('samtaler',document.querySelector('[data-page=samtaler]'))">＋ Se alle</button></h3>
+            <div class="calls-list" id="recentCallsList"></div>
+          </div>
+
+          <div class="card">
+            <h3>Konvertering</h3>
+            <div class="gauge">
+              <svg viewBox="0 0 200 120">
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e8e5dd" stroke-width="20" stroke-linecap="round"/>
+                <path d="M 20 100 A 80 80 0 0 1 142 32" fill="none" stroke="url(#grad)" stroke-width="20" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#7dd3a3"/>
+                    <stop offset="100%" stop-color="#1f5135"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-text">
+                <div class="pct">38<span style="font-size:20px;">.5%</span></div>
+                <div class="lbl">Anrop til booking</div>
+              </div>
+            </div>
+            <div class="legend">
+              <div class="key"><div class="sw" style="background:var(--green);"></div> Booket (353)</div>
+              <div class="key"><div class="sw" style="background:#e8e5dd;"></div> Andre (563)</div>
+            </div>
+          </div>
+
+          <div class="tracker">
+            <div class="tracker-content">
+              <h3>AI-aktivitet i dag</h3>
+              <div class="display">kl 07:18</div>
+              <div class="display-label">Lærte ny FAQ — før du åpnet</div>
+              <div class="ai-detail">"Tar dere imot elbil-service?" — la til standardsvar med henvisning til Lambertseter</div>
+              <button onclick="switchPage('innsikt',document.querySelector('[data-page=innsikt]'))" style="margin-top:14px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:9px 16px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;width:100%;transition:all 0.15s;">Se alle hendelser →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== INNSIKT ==================== -->
+      <div id="page-innsikt" class="page">
+        <div class="page-head">
+          <div><h1>Innsikt</h1><p class="sub">Trender, mønstre og dypere analyse</p></div>
+          <div class="head-actions"><select class="filter-select"><option>Siste 7 dager</option><option>Siste 30 dager</option><option>Denne måneden</option></select></div>
+        </div>
+
+        <div class="card">
+          <h3>🎯 Slik beveger kundene seg fra anrop til møtt</h3>
+          <div class="funnel-row"><div class="funnel-label">Innkommende anrop</div><div class="funnel-bar"><div class="funnel-fill s1" style="width:100%">916</div></div><div class="funnel-pct">100%</div></div>
+          <div class="funnel-row"><div class="funnel-label">AI svarte</div><div class="funnel-bar"><div class="funnel-fill s2" style="width:97.4%">892</div></div><div class="funnel-pct">97.4% <span class="drop">−24</span></div></div>
+          <div class="funnel-row"><div class="funnel-label">Reell intensjon</div><div class="funnel-bar"><div class="funnel-fill s3" style="width:78.6%">720</div></div><div class="funnel-pct">78.6% <span class="drop">−172</span></div></div>
+          <div class="funnel-row"><div class="funnel-label">Booket time</div><div class="funnel-bar"><div class="funnel-fill s4" style="width:38.5%">353</div></div><div class="funnel-pct">38.5% <span class="drop">−367</span></div></div>
+          <div class="funnel-row"><div class="funnel-label">Møtte til avtalt tid</div><div class="funnel-bar"><div class="funnel-fill s4" style="width:35.7%">327</div></div><div class="funnel-pct">35.7% <span class="drop">−26</span></div></div>
+          <div class="report-action-callout" style="margin-top:14px;"><strong>💡 Største lekkasje:</strong> 367 kunder med reell intensjon booket likevel ikke. AI har flagget at <strong>62% av disse</strong> stilte prisspørsmål — vurder transparent prisliste i åpningssetningen.</div>
+        </div>
+
+        <div class="card">
+          <h3>🔍 Hva kunder faktisk spør om <span class="count-pill">siste 7 dager</span></h3>
+          <div id="topQuestions"></div>
+        </div>
+
+        <div class="card">
+          <h3>✦ Hva AI har gjort selvstendig <span class="count-pill">5 hendelser</span></h3>
+          <div id="aiActionLog"></div>
+        </div>
+
+        <div class="card">
+          <h3>Ytelse per lokasjon</h3>
+          <table>
+            <thead><tr><th>Lokasjon</th><th>Manager</th><th>Anrop</th><th>Bookinger</th><th>Konv.</th><th>Svarrate</th><th>Status</th></tr></thead>
+            <tbody id="locationTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SAMTALER ==================== -->
+      <div id="page-samtaler" class="page">
+        <div class="page-head">
+          <div><h1>Samtaler</h1><p class="sub">Alle AI-samtaler med transkript og opptak</p></div>
+          <div class="head-actions">
+            <select class="filter-select"><option>Alle typer</option><option>Booking</option><option>Info</option><option>Overført</option></select>
+            <select class="filter-select"><option>I dag</option><option>Siste 7 dager</option><option>Siste 30 dager</option></select>
+          </div>
+        </div>
+        <div id="transcriptList"></div>
+      </div>
+
+      <!-- ==================== BOOKINGER ==================== -->
+      <div id="page-bookinger" class="page">
+        <div class="page-head">
+          <div><h1>Bookinger i dag</h1><p class="sub">12 bookinger — fredag 24. april</p></div>
+          <div class="head-actions"><select class="filter-select"><option>I dag</option><option>I morgen</option><option>Denne uken</option></select></div>
+        </div>
+        <div class="booking-list" id="bookingList"></div>
+      </div>
+
+      <!-- ==================== LOKASJONER ==================== -->
+      <div id="page-lokasjoner" class="page">
+        <div class="page-head">
+          <div><h1>Lokasjoner</h1><p class="sub">Alle 8 aktive lokasjoner</p></div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi" onclick="showLokKpi(0)"><div class="kpi-top"><span class="kpi-label">Aktive lokasjoner</span><div class="kpi-arrow">↗</div></div><div class="kpi-num" style="color:var(--green);">8</div><div class="kpi-foot">Alle online</div></div>
+          <div class="kpi" onclick="showLokKpi(1)"><div class="kpi-top"><span class="kpi-label">Snitt svarrate</span><div class="kpi-arrow">↗</div></div><div class="kpi-num">97.4%</div><div class="kpi-foot"><span class="delta">+2.1pp</span></div></div>
+          <div class="kpi" onclick="showLokKpi(2)"><div class="kpi-top"><span class="kpi-label">Beste lokasjon</span><div class="kpi-arrow">↗</div></div><div class="kpi-num" style="font-size:28px;">Lillestrøm</div><div class="kpi-foot">47.2% konvertering</div></div>
+          <div class="kpi" onclick="showLokKpi(3)"><div class="kpi-top"><span class="kpi-label">Trenger oppmerksomhet</span><div class="kpi-arrow">↗</div></div><div class="kpi-num" style="font-size:28px;color:var(--amber);">Tveita</div><div class="kpi-foot">34.7% konvertering</div></div>
+        </div>
+        <div class="card">
+          <h3>Alle lokasjoner</h3>
+          <table>
+            <thead><tr><th>Lokasjon</th><th>Adresse</th><th>Manager</th><th>Anrop</th><th>Bookinger</th><th>Konv.</th><th>Status</th></tr></thead>
+            <tbody id="locDetailTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== KUNDER ==================== -->
+      <div id="page-kunder" class="page">
+        <div class="page-head">
+          <div><h1>Kunder</h1><p class="sub">Kundebase fra AI-samtaler — 847 registrerte</p></div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi" onclick="showKunderKpi(0)"><div class="kpi-top"><span class="kpi-label">Totalt registrerte</span><div class="kpi-arrow">↗</div></div><div class="kpi-num" style="color:var(--green);">847</div><div class="kpi-foot">Aktive kunder</div></div>
+          <div class="kpi" onclick="showKunderKpi(1)"><div class="kpi-top"><span class="kpi-label">Nye denne uka</span><div class="kpi-arrow">↗</div></div><div class="kpi-num">62</div><div class="kpi-foot"><span class="delta">+14%</span></div></div>
+          <div class="kpi" onclick="showKunderKpi(2)"><div class="kpi-top"><span class="kpi-label">Gjengangere</span><div class="kpi-arrow">↗</div></div><div class="kpi-num">34<span style="font-size:30px;">%</span></div><div class="kpi-foot">av aktive</div></div>
+          <div class="kpi" onclick="showKunderKpi(3)"><div class="kpi-top"><span class="kpi-label">Snitt bookinger</span><div class="kpi-arrow">↗</div></div><div class="kpi-num">2.4</div><div class="kpi-foot">per kunde</div></div>
+        </div>
+        <div class="card">
+          <h3>Siste registrerte kunder</h3>
+          <table>
+            <thead><tr><th>Navn</th><th>Telefon</th><th>Lokasjon</th><th>Foretrukket service</th><th>Siste kontakt</th><th>Bookinger</th></tr></thead>
+            <tbody id="customerTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== RAPPORTER ==================== -->
+      <div id="page-rapporter" class="page">
+        <div class="page-head">
+          <div><h1>Rapporter</h1><p class="sub">Ukentlige og månedlige rapporter — auto-generert</p></div>
+          <div class="head-actions">
+            <button class="btn btn-primary" onclick="generateReport('week')"><span>＋</span> Ny ukerapport</button>
+            <button class="btn btn-outline" onclick="generateReport('month')">Ny månedsrapport</button>
+          </div>
+        </div>
+        <div id="reportList"></div>
+      </div>
+
+      <!-- ==================== INNSTILLINGER ==================== -->
+      <div id="page-innstillinger" class="page">
+        <div class="page-head"><div><h1>Innstillinger</h1><p class="sub">Konfigurer AI-assistenten</p></div></div>
+        <div class="settings-group">
+          <h3>AI-assistent</h3>
+          <div class="setting-row"><div class="setting-label">AI aktiv<span class="hint">Slå av for å stoppe AI-svar midlertidig</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast(this.classList.contains('on')?'AI aktivert':'AI deaktivert')"><div class="knob"></div></div></div>
+          <div class="setting-row"><div class="setting-label">Automatisk booking<span class="hint">Tillat AI å booke timer uten bekreftelse</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+          <div class="setting-row"><div class="setting-label">SMS-bekreftelse<span class="hint">Send SMS til kunde etter booking</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+          <div class="setting-row"><div class="setting-label">Overføring til ansatt<span class="hint">Tillat AI å sette over til et menneske</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+        </div>
+        <div class="settings-group">
+          <h3>Varsler</h3>
+          <div class="setting-row"><div class="setting-label">E-postvarsler<span class="hint">Daglig oppsummering til lars@mekkern.no</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+          <div class="setting-row"><div class="setting-label">Ukentlig rapport<span class="hint">Automatisk rapport hver mandag kl 08:00</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
+        </div>
+      </div>
+
     </div>
-  </div>
-
-  <div class="table-card">
-    <h3>
-      Ytelse per lokasjon
-      <input type="text" class="search-box" placeholder="Søk lokasjon..." oninput="filterLocations(this.value)">
-    </h3>
-    <table>
-      <thead>
-        <tr>
-          <th onclick="sortTable('name')" class="sorted">Lokasjon ↕</th>
-          <th onclick="sortTable('calls')">Anrop ↕</th>
-          <th onclick="sortTable('bookings')">Bookinger ↕</th>
-          <th onclick="sortTable('rate')">Konvertering ↕</th>
-          <th onclick="sortTable('answer')">Svarrate ↕</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="locationTable"></tbody>
-    </table>
-  </div>
-
-  <div class="table-card">
-    <h3>Siste samtaler</h3>
-    <div class="calls-grid" id="recentCalls"></div>
-  </div>
-</div>
-
-<!-- ==================== SAMTALER ==================== -->
-<div id="page-samtaler" class="page">
-  <div class="page-header">
-    <div><h1>Samtaler</h1><p class="subtitle">Alle AI-samtaler med transkript</p></div>
-    <div class="filters">
-      <select><option>Alle typer</option><option>Booking</option><option>Prisspørsmål</option><option>Overført</option></select>
-      <select><option>I dag</option><option>Siste 7 dager</option><option>Siste 30 dager</option></select>
-    </div>
-  </div>
-  <div id="transcriptList"></div>
-</div>
-
-<!-- ==================== BOOKINGER ==================== -->
-<div id="page-bookinger" class="page">
-  <div class="page-header">
-    <div><h1>Bookinger i dag</h1><p class="subtitle">12 bookinger — fredag 28. mars</p></div>
-    <div class="filters">
-      <select><option>I dag</option><option>I morgen</option><option>Denne uken</option></select>
-    </div>
-  </div>
-  <div id="bookingList" class="booking-list"></div>
-</div>
-
-<!-- ==================== LOKASJONER ==================== -->
-<div id="page-lokasjoner" class="page">
-  <div class="page-header">
-    <div><h1>Lokasjoner</h1><p class="subtitle">Alle 14 aktive lokasjoner</p></div>
-  </div>
-  <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
-    <div class="kpi-card"><div class="label">Aktive lokasjoner</div><div class="value" style="color:var(--green)">14</div></div>
-    <div class="kpi-card"><div class="label">Gjennomsnittlig svarrate</div><div class="value">97.3%</div></div>
-    <div class="kpi-card"><div class="label">Beste lokasjon</div><div class="value" style="font-size:20px;color:var(--teal-light)">Lillestrøm</div></div>
-  </div>
-  <div class="table-card"><h3>Alle lokasjoner</h3><table><thead><tr><th>Lokasjon</th><th>Adresse</th><th>Anrop/dag</th><th>Svarrate</th><th>Status</th></tr></thead><tbody id="locDetailTable"></tbody></table></div>
-</div>
-
-<!-- ==================== KUNDER ==================== -->
-<div id="page-kunder" class="page">
-  <div class="page-header"><div><h1>Kunder</h1><p class="subtitle">Kundebase fra AI-samtaler — 847 registrerte</p></div>
-    <div class="filters"><input type="text" placeholder="Søk kunde..." oninput="filterCustomers(this.value)"><select><option>Alle lokasjoner</option></select></div>
-  </div>
-  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
-    <div class="kpi-card"><div class="label">Totalt registrerte</div><div class="value" style="color:var(--teal-light)">847</div></div>
-    <div class="kpi-card"><div class="label">Nye denne uken</div><div class="value" style="color:var(--green)">62</div></div>
-    <div class="kpi-card"><div class="label">Gjengangere</div><div class="value">34%</div></div>
-    <div class="kpi-card"><div class="label">Snitt bookinger</div><div class="value" style="color:var(--amber)">2.4</div></div>
-  </div>
-  <div class="table-card"><h3>Siste registrerte kunder <span style="font-weight:400;font-size:12px;color:var(--text-muted)">— viser 15 nyeste</span></h3><table><thead><tr><th>Navn</th><th>Telefon</th><th>Lokasjon</th><th>Foretrukket tjeneste</th><th>Siste kontakt</th><th>Bookinger</th></tr></thead><tbody id="customerTable"></tbody></table></div>
-</div>
-
-<!-- ==================== RAPPORTER ==================== -->
-<div id="page-rapporter" class="page">
-  <div class="page-header"><div><h1>Rapporter</h1><p class="subtitle">Ukentlige og månedlige rapporter</p></div>
-    <div class="filters"><select><option>Alle rapporter</option><option>Ukentlig</option><option>Månedlig</option></select></div>
-  </div>
-  <div id="reportList"></div>
-</div>
-
-<!-- ==================== INNSTILLINGER ==================== -->
-<div id="page-innstillinger" class="page">
-  <div class="page-header"><div><h1>Innstillinger</h1><p class="subtitle">Konfigurer AI-assistenten</p></div></div>
-  <div class="settings-group">
-    <h3>AI-assistent</h3>
-    <div class="setting-row"><div class="setting-label">AI aktiv<span class="hint">Slå av for å stoppe AI-svar midlertidig</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast(this.classList.contains('on')?'AI aktivert':'AI deaktivert')"><div class="knob"></div></div></div>
-    <div class="setting-row"><div class="setting-label">Automatisk booking<span class="hint">Tillat AI å booke timer uten bekreftelse</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-    <div class="setting-row"><div class="setting-label">SMS-bekreftelse<span class="hint">Send SMS til kunde etter booking</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-    <div class="setting-row"><div class="setting-label">Ansattvarsel<span class="hint">Varsle ansatte om nye bookinger</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-    <div class="setting-row"><div class="setting-label">Overføring til ansatt<span class="hint">Tillat AI å sette over til et menneske</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-  </div>
-  <div class="settings-group">
-    <h3>Varsler</h3>
-    <div class="setting-row"><div class="setting-label">E-postvarsler<span class="hint">Daglig oppsummering til oh@handzon.no</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-    <div class="setting-row"><div class="setting-label">Ukentlig rapport<span class="hint">Automatisk rapport hver mandag kl 08:00</span></div><div class="toggle on" onclick="this.classList.toggle('on');showToast('Innstilling oppdatert')"><div class="knob"></div></div></div>
-  </div>
-</div>
-
-</main>
+  </main>
 </div>
 
 <!-- Detail panel -->
@@ -463,435 +1043,971 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Report Modal -->
+<div class="report-overlay" id="reportOverlay" onclick="if(event.target===this)closeReport()">
+  <div class="report-modal">
+    <div class="report-modal-actions">
+      <span class="left-meta" id="reportMeta">Mekkern Bilverksted — automatisk rapport</span>
+      <div class="actions">
+        <button class="report-action-btn ghost" onclick="closeReport()">Lukk</button>
+        <button class="report-action-btn ghost" onclick="showToast('📧 Rapport sendt til lars@mekkern.no')">Send på e-post</button>
+        <button class="report-action-btn primary" onclick="window.print()">⬇ Last ned PDF</button>
+      </div>
+    </div>
+    <div class="report-doc" id="reportDoc"></div>
+  </div>
+</div>
+
 <script>
 // ===== DATA =====
 const locations = [
-  {name:'Lambertseter',calls:112,bookings:45,rate:40.2,answer:98.2,status:'green',addr:'Lambertseter senter'},
-  {name:'Alna',calls:105,bookings:42,rate:40.0,answer:97.8,status:'green',addr:'Alna senter'},
-  {name:'Skullerud',calls:98,bookings:38,rate:38.8,answer:98.5,status:'green',addr:'Skullerudveien 15'},
-  {name:'Manglerud',calls:95,bookings:36,rate:37.9,answer:96.1,status:'green',addr:'Manglerud senter'},
-  {name:'Bryn',calls:101,bookings:40,rate:39.6,answer:97.4,status:'green',addr:'Brynsveien 3'},
-  {name:'Ryen',calls:88,bookings:33,rate:37.5,answer:98.0,status:'green',addr:'Ryensvingen 1'},
-  {name:'Helsfyr',calls:92,bookings:35,rate:38.0,answer:97.1,status:'green',addr:'Helsfyr T-bane'},
-  {name:'Tveita',calls:78,bookings:28,rate:35.9,answer:96.8,status:'amber',addr:'Tveita senter'},
-  {name:'Furuset',calls:85,bookings:32,rate:37.6,answer:97.5,status:'green',addr:'Furuset senter'},
-  {name:'Stovner',calls:82,bookings:30,rate:36.6,answer:95.2,status:'amber',addr:'Stovner senter'},
-  {name:'Grorud',calls:79,bookings:29,rate:36.7,answer:98.1,status:'green',addr:'Grorud senter'},
-  {name:'Romsås',calls:72,bookings:25,rate:34.7,answer:97.9,status:'green',addr:'Romsås senter'},
-  {name:'Lørenskog',calls:86,bookings:35,rate:40.7,answer:97.6,status:'green',addr:'Metro senter'},
-  {name:'Lillestrøm',calls:74,bookings:35,rate:47.3,answer:98.4,status:'green',addr:'Lillestrøm Torv'},
+  {name:'Lambertseter',calls:142,bookings:55,rate:38.7,answer:98.2,status:'green',addr:'Lambertseter senter',mgr:'Trond Olsen'},
+  {name:'Alna',calls:128,bookings:51,rate:39.8,answer:97.8,status:'green',addr:'Alna senter',mgr:'Henrik Dahl'},
+  {name:'Bryn',calls:134,bookings:49,rate:36.6,answer:97.4,status:'green',addr:'Brynsveien 3',mgr:'Stian Haugen'},
+  {name:'Skullerud',calls:121,bookings:47,rate:38.8,answer:98.5,status:'green',addr:'Skullerudveien 15',mgr:'Petter Berg'},
+  {name:'Helsfyr',calls:110,bookings:41,rate:37.3,answer:97.1,status:'green',addr:'Helsfyr T-bane',mgr:'Geir Haugen'},
+  {name:'Tveita',calls:95,bookings:33,rate:34.7,answer:96.8,status:'amber',addr:'Tveita senter',mgr:'Lars Pettersen'},
+  {name:'Stovner',calls:98,bookings:36,rate:36.7,answer:95.2,status:'amber',addr:'Stovner senter',mgr:'Erik Sandvik'},
+  {name:'Lillestrøm',calls:88,bookings:41,rate:46.6,answer:98.4,status:'green',addr:'Lillestrøm Torv',mgr:'Trond Berg'},
 ];
 
 const recentCalls = [
-  {name:'Erik Johansen',type:'booked',icon:'📅',loc:'Lambertseter',desc:'Utvendig vask — i morgen kl 14:00',time:'3 min siden',dur:'1:42'},
-  {name:'Maria Olsen',type:'booked',icon:'📅',loc:'Bryn',desc:'Premium vask — lørdag kl 10:30',time:'8 min siden',dur:'2:15'},
-  {name:'Anders Berg',type:'info',icon:'ℹ️',loc:'Alna',desc:'Spurte om pris for innvendig rens',time:'12 min siden',dur:'0:58'},
-  {name:'Ukjent nummer',type:'transferred',icon:'🔀',loc:'Stovner',desc:'Overført til ansatt — spesiell forespørsel',time:'18 min siden',dur:'0:34'},
-  {name:'Kristine Haugen',type:'booked',icon:'📅',loc:'Skullerud',desc:'Innvendig + utvendig — onsdag kl 09:00',time:'25 min siden',dur:'2:48'},
-  {name:'Thomas Lie',type:'info',icon:'ℹ️',loc:'Manglerud',desc:'Spurte om åpningstider i helgen',time:'31 min siden',dur:'0:45'},
-  {name:'Silje Kristiansen',type:'booked',icon:'📅',loc:'Lillestrøm',desc:'Utvendig vask — mandag kl 11:00',time:'38 min siden',dur:'1:55'},
-  {name:'Petter Nilsen',type:'booked',icon:'📅',loc:'Lørenskog',desc:'Premium pakke — tirsdag kl 13:30',time:'42 min siden',dur:'3:02'},
+  {name:'Erik Johansen',type:'booked',loc:'Lambertseter',desc:'EU-kontroll, VW Golf 2018 — torsdag kl 14:00',time:'3 min siden',dur:'1:42',color:'#a78bfa,#8b5cf6'},
+  {name:'Maria Olsen',type:'booked',loc:'Bryn',desc:'Bremseskift, Toyota RAV4 — lørdag kl 10:30',time:'8 min siden',dur:'2:15',color:'#f87171,#ef4444'},
+  {name:'Anders Berg',type:'info',loc:'Alna',desc:'Spurte om Tesla-oljeskift — booket ikke',time:'12 min siden',dur:'0:58',color:'#fbbf24,#f59e0b'},
+  {name:'Kristine Haugen',type:'booked',loc:'Skullerud',desc:'Service + EU-kontroll, Skoda — onsdag 09:00',time:'25 min siden',dur:'2:48',color:'#60a5fa,#3b82f6'},
+  {name:'Silje Kristiansen',type:'booked',loc:'Lillestrøm',desc:'EU-kontroll, BMW 320d — mandag kl 11:00',time:'38 min siden',dur:'1:55',color:'#34d399,#10b981'},
+  {name:'Petter Nilsen',type:'booked',loc:'Lørenskog',desc:'Storservice, Volvo XC60 — tirsdag 13:30',time:'42 min siden',dur:'3:02',color:'#fb923c,#f97316'},
 ];
 
 const transcripts = [
   {caller:'Erik Johansen',loc:'Lambertseter',dur:'1:42',type:'booking',lines:[
-    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask! Hvordan kan jeg hjelpe deg?'},
-    {who:'human',text:'Hei, jeg vil gjerne bestille en utvendig vask.'},
+    {who:'ai',text:'Hei, og velkommen til Mekkern Bilverksted! Hvordan kan jeg hjelpe deg?'},
+    {who:'human',text:'Hei, jeg vil gjerne bestille en EU-kontroll.'},
     {who:'ai',text:'Selvfølgelig! Hvilken lokasjon passer best for deg?'},
     {who:'human',text:'Lambertseter.'},
-    {who:'ai',text:'Flott! Vi har ledig tid i morgen kl 14:00. Passer det?'},
+    {who:'ai',text:'Vi har ledig tid i morgen kl 14:00. Passer det?'},
     {who:'human',text:'Ja, det er perfekt.'},
-    {who:'ai',text:'Da har jeg booket utvendig vask på Lambertseter i morgen kl 14:00. Du får en SMS-bekreftelse. Ha en fin dag!'},
+    {who:'ai',text:'Da har jeg booket EU-kontroll på Lambertseter i morgen kl 14:00. Du får SMS-bekreftelse. Ha en fin dag!'},
   ]},
   {caller:'Maria Olsen',loc:'Bryn',dur:'2:15',type:'booking',lines:[
-    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask! Hvordan kan jeg hjelpe deg?'},
-    {who:'human',text:'Hei! Hva koster premium-vasken deres?'},
-    {who:'ai',text:'Premium-pakken koster 599 kr og inkluderer utvendig vask, innvendig støvsuging, og polering. Skal jeg booke en time?'},
+    {who:'ai',text:'Hei, og velkommen til Mekkern Bilverksted! Hvordan kan jeg hjelpe deg?'},
+    {who:'human',text:'Hei! Hva koster bremseskift hos dere?'},
+    {who:'ai',text:'Bremseskift starter på 2890 kr og inkluderer kontroll og pad-bytte foran. Skal jeg booke en time?'},
     {who:'human',text:'Ja, på Bryn helst. Har dere ledig lørdag?'},
     {who:'ai',text:'Lørdag kl 10:30 er ledig på Bryn. Skal jeg booke den?'},
     {who:'human',text:'Ja takk!'},
-    {who:'ai',text:'Herlig! Premium vask på Bryn, lørdag kl 10:30. SMS-bekreftelse er på vei. Velkommen!'},
+    {who:'ai',text:'Herlig! Bremseskift på Bryn, lørdag kl 10:30. SMS-bekreftelse er på vei. Velkommen!'},
   ]},
   {caller:'Anders Berg',loc:'Alna',dur:'0:58',type:'info',lines:[
-    {who:'ai',text:'Hei, og velkommen til Handz On Bilvask!'},
-    {who:'human',text:'Hei, hva koster innvendig rens?'},
-    {who:'ai',text:'Innvendig rens starter på 399 kr. Vi tilbyr også en komplett pakke med utvendig vask for 699 kr. Ønsker du å booke?'},
+    {who:'ai',text:'Hei, og velkommen til Mekkern Bilverksted!'},
+    {who:'human',text:'Hei, hva koster oljeskift?'},
+    {who:'ai',text:'Oljeskift starter på 890 kr. Vi tilbyr også en storservice for 4290 kr. Ønsker du å booke?'},
     {who:'human',text:'Nei, jeg skal bare sjekke prisen. Takk!'},
     {who:'ai',text:'Ingen problem! Ring gjerne tilbake når du er klar. Ha en fin dag!'},
   ]},
 ];
 
 const bookings = [
-  {time:'09:00',name:'Kristine Haugen',service:'Innvendig + utvendig',loc:'Skullerud'},
-  {time:'09:30',name:'Lars Pedersen',service:'Utvendig vask',loc:'Alna'},
-  {time:'10:00',name:'Anne Bakken',service:'Premium pakke',loc:'Lambertseter'},
-  {time:'10:30',name:'Maria Olsen',service:'Premium vask',loc:'Bryn'},
-  {time:'11:00',name:'Silje Kristiansen',service:'Utvendig vask',loc:'Lillestrøm'},
-  {time:'11:30',name:'Knut Hansen',service:'Innvendig rens',loc:'Helsfyr'},
-  {time:'12:00',name:'Ingrid Dahl',service:'Utvendig vask',loc:'Furuset'},
-  {time:'13:00',name:'Erik Johansen',service:'Utvendig vask',loc:'Lambertseter'},
-  {time:'13:30',name:'Petter Nilsen',service:'Premium pakke',loc:'Lørenskog'},
-  {time:'14:00',name:'Tone Larsen',service:'Innvendig + utvendig',loc:'Manglerud'},
-  {time:'14:30',name:'Rune Hauge',service:'Utvendig vask',loc:'Grorud'},
-  {time:'15:00',name:'Mette Sørensen',service:'Premium pakke',loc:'Ryen'},
+  {time:'09:00',name:'Kristine Haugen',service:'Service + EU-kontroll',loc:'Skullerud'},
+  {time:'09:30',name:'Lars Pedersen',service:'EU-kontroll',loc:'Alna'},
+  {time:'10:00',name:'Anne Bakken',service:'Storservice',loc:'Lambertseter'},
+  {time:'10:30',name:'Maria Olsen',service:'Bremseskift',loc:'Bryn'},
+  {time:'11:00',name:'Silje Kristiansen',service:'EU-kontroll',loc:'Lillestrøm'},
+  {time:'11:30',name:'Knut Hansen',service:'Oljeskift',loc:'Helsfyr'},
+  {time:'13:00',name:'Erik Johansen',service:'EU-kontroll',loc:'Lambertseter'},
+  {time:'13:30',name:'Petter Nilsen',service:'Storservice',loc:'Lørenskog'},
+  {time:'14:00',name:'Tone Larsen',service:'Service + EU-kontroll',loc:'Manglerud'},
+  {time:'14:30',name:'Rune Hauge',service:'EU-kontroll',loc:'Grorud'},
+  {time:'15:00',name:'Mette Sørensen',service:'Storservice',loc:'Ryen'},
 ];
 
 const customers = [
-  {name:'Erik Johansen',phone:'+47 912 34 567',loc:'Lambertseter',service:'Utvendig vask',last:'I dag',count:3},
-  {name:'Maria Olsen',phone:'+47 923 45 678',loc:'Bryn',service:'Premium pakke',last:'I dag',count:5},
-  {name:'Kristine Haugen',phone:'+47 934 56 789',loc:'Skullerud',service:'Innvendig + utvendig',last:'I dag',count:2},
-  {name:'Lars Pedersen',phone:'+47 945 67 890',loc:'Alna',service:'Utvendig vask',last:'I går',count:1},
-  {name:'Silje Kristiansen',phone:'+47 956 78 901',loc:'Lillestrøm',service:'Utvendig vask',last:'I dag',count:4},
-  {name:'Petter Nilsen',phone:'+47 967 89 012',loc:'Lørenskog',service:'Premium pakke',last:'I dag',count:2},
-  {name:'Anne Bakken',phone:'+47 978 90 123',loc:'Lambertseter',service:'Innvendig rens',last:'I går',count:7},
-  {name:'Knut Hansen',phone:'+47 989 01 234',loc:'Helsfyr',service:'Innvendig rens',last:'2 dager siden',count:1},
-  {name:'Ingrid Dahl',phone:'+47 990 12 345',loc:'Furuset',service:'Utvendig vask',last:'I dag',count:3},
-  {name:'Tone Larsen',phone:'+47 901 23 456',loc:'Manglerud',service:'Innvendig + utvendig',last:'I dag',count:2},
-  {name:'Rune Hauge',phone:'+47 412 34 567',loc:'Grorud',service:'Utvendig vask',last:'I dag',count:1},
-  {name:'Mette Sørensen',phone:'+47 423 45 678',loc:'Ryen',service:'Premium pakke',last:'I dag',count:6},
-  {name:'Geir Kristoffersen',phone:'+47 434 56 789',loc:'Stovner',service:'Utvendig vask',last:'I går',count:2},
-  {name:'Lise Berg',phone:'+47 445 67 890',loc:'Tveita',service:'Innvendig rens',last:'2 dager siden',count:1},
-  {name:'Trond Haugen',phone:'+47 456 78 901',loc:'Romsås',service:'Premium pakke',last:'I går',count:4},
+  {name:'Erik Johansen',phone:'+47 912 34 567',loc:'Lambertseter',service:'EU-kontroll',last:'I dag',count:3,bil:'VW Golf 2018',regnr:'KE 23 456',euDato:'2027-03-15',totalKr:5780,vip:false},
+  {name:'Maria Olsen',phone:'+47 923 45 678',loc:'Bryn',service:'Bremseskift',last:'I dag',count:5,bil:'Toyota RAV4 2020',regnr:'BV 89 012',euDato:'2026-09-22',totalKr:14250,vip:true},
+  {name:'Kristine Haugen',phone:'+47 934 56 789',loc:'Skullerud',service:'Service + EU-kontroll',last:'I dag',count:2,bil:'Skoda Octavia 2017',regnr:'CE 45 678',euDato:'2027-01-08',totalKr:6890,vip:false},
+  {name:'Lars Pedersen',phone:'+47 945 67 890',loc:'Alna',service:'EU-kontroll',last:'I går',count:1,bil:'Tesla Model 3',regnr:'EL 78 901',euDato:'2027-08-30',totalKr:890,vip:false},
+  {name:'Silje Kristiansen',phone:'+47 956 78 901',loc:'Lillestrøm',service:'EU-kontroll',last:'I dag',count:4,bil:'BMW 320d 2019',regnr:'EK 12 345',euDato:'2026-06-04',totalKr:9400,vip:false},
+  {name:'Petter Nilsen',phone:'+47 967 89 012',loc:'Lørenskog',service:'Storservice',last:'I dag',count:2,bil:'Volvo XC60 2016',regnr:'CV 56 789',euDato:'2026-05-19',totalKr:8580,vip:false},
+  {name:'Anne Bakken',phone:'+47 978 90 123',loc:'Lambertseter',service:'Oljeskift',last:'I går',count:7,bil:'Audi A4 2015',regnr:'DH 34 567',euDato:'2026-11-12',totalKr:18230,vip:true},
+  {name:'Knut Hansen',phone:'+47 989 01 234',loc:'Helsfyr',service:'Oljeskift',last:'2 dager',count:1,bil:'Ford Focus 2019',regnr:'BR 67 890',euDato:'2027-02-28',totalKr:890,vip:false},
 ];
 
 const reports = [
-  {title:'Ukerapport — Uke 13',date:'24. mars 2026',type:'weekly',status:'new',summary:'1 247 anrop, 483 bookinger, 97.3% svarrate. Lillestrøm toppresterte.'},
-  {title:'Ukerapport — Uke 12',date:'17. mars 2026',type:'weekly',status:'read',summary:'1 014 anrop, 392 bookinger, 95.2% svarrate. Ny rekord for Bryn.'},
-  {title:'Månedsrapport — Februar 2026',date:'1. mars 2026',type:'monthly',status:'read',summary:'3 842 anrop, 1 488 bookinger, 96.1% snitt svarrate. Stovner forbedret seg 12%.'},
-  {title:'Ukerapport — Uke 11',date:'10. mars 2026',type:'weekly',status:'read',summary:'987 anrop, 378 bookinger, 96.4% svarrate.'},
-  {title:'Ukerapport — Uke 10',date:'3. mars 2026',type:'weekly',status:'read',summary:'923 anrop, 351 bookinger, 95.8% svarrate.'},
-  {title:'Månedsrapport — Januar 2026',date:'1. februar 2026',type:'monthly',status:'read',summary:'3 201 anrop, 1 203 bookinger, 94.7% snitt svarrate. Første fulle driftsmåned.'},
-  {title:'Ukerapport — Uke 9',date:'24. februar 2026',type:'weekly',status:'read',summary:'891 anrop, 334 bookinger, 95.1% svarrate.'},
-  {title:'Oppstartsrapport',date:'15. januar 2026',type:'monthly',status:'read',summary:'Alle 14 lokasjoner aktivert. Første uke: 412 anrop, 142 bookinger.'},
+  {title:'Ukerapport — Uke 17',date:'24. apr 2026',type:'weekly',status:'new',summary:'916 anrop, 353 bookinger, 97.4% svarrate. Lillestrøm toppresterte.'},
+  {title:'Ukerapport — Uke 16',date:'17. apr 2026',type:'weekly',status:'read',summary:'1 014 anrop, 392 bookinger, 95.2% svarrate. Ny rekord for Bryn.'},
+  {title:'Månedsrapport — Mars 2026',date:'1. apr 2026',type:'monthly',status:'read',summary:'3 842 anrop, 1 488 bookinger, 96.1% snitt svarrate. Stovner forbedret seg 12%.'},
+  {title:'Ukerapport — Uke 15',date:'10. apr 2026',type:'weekly',status:'read',summary:'987 anrop, 378 bookinger, 96.4% svarrate.'},
+  {title:'Ukerapport — Uke 14',date:'3. apr 2026',type:'weekly',status:'read',summary:'923 anrop, 351 bookinger, 95.8% svarrate.'},
+  {title:'Månedsrapport — Februar 2026',date:'1. mars 2026',type:'monthly',status:'read',summary:'3 201 anrop, 1 203 bookinger, 94.7% snitt svarrate.'},
 ];
 
-// ===== CHART SETUP =====
-Chart.defaults.color='#94a3b8';Chart.defaults.borderColor='#1e293b';Chart.defaults.font.family='Inter,sans-serif';
+const sjefensFokus = [
+  {emoji:'🏆',title:'Lillestrøm satte ny rekord',due:'Trond — 82% konvertering torsdag',type:'win',desc:'Trond konverterte 18 av 22 anrop på torsdag. Mønsteret: starter alltid med "hva slags bil snakker vi om" før pris.'},
+  {emoji:'📉',title:'Tveita: 3 lange samtaler',due:'Elbil-skript mangler — i går kveld',type:'risk',desc:'Alle 3 ringte etter åpningstid om elbil-service. AI ga generelle svar fordi vi mangler spesifikt skript.'},
+  {emoji:'🔁',title:'Maria Olsen — 4. gang',due:'Stamkunde, vurder VIP-program',type:'opp',desc:'Stamkunde med Toyota RAV4 — bookinger har akselerert siden januar. Verdt å legge til "VIP-kunder"-listen?'},
+  {emoji:'⚡',title:'AI flyttet 11 timer rundt',due:'Bryn dekkmaskin nede — alle takket ja',type:'bolt',desc:'Petters Slack-melding ble fanget opp. AI foreslo automatisk omplassering til Alna. Alle 11 kunder takket ja, 0 tap.'},
+];
 
-let weekChart, categoryChart, currentChartType='bar';
-const weekLabels=['Man','Tir','Ons','Tor','Fre','Lør','Søn'];
-const weekCalls=[156,189,172,201,198,186,145];
-const weekBookings=[58,72,65,81,78,74,55];
+const aiActions = [
+  {time:'i dag 07:18',event:'Lærte ny FAQ',detail:'"Tar dere imot elbil-service?" — la til standardsvar med henvisning til Lambertseter (eneste lokasjon med høyspent-kvalifisering)'},
+  {time:'i går 22:41',event:'Flagget kunde for oppfølging',detail:'Anders Berg (+47 945 67 890) — spurte om Tesla-oljeskift, lagt i ringes-tilbake-kø.'},
+  {time:'i går 16:52',event:'Omplasserte 11 bookinger',detail:'Bryn dekkmaskin nede → automatisk forslag om Alna for kunder. 11 av 11 takket ja, 0 tap.'},
+  {time:'i går 14:23',event:'Oppdaterte prising',detail:'Storservice-pris fra 4190 → 4290 kr — fanget opp av Christines notat på tirsdag.'},
+  {time:'2 dager siden',event:'Identifiserte mønster',detail:'Regn-dager → +34% bookinger på innvendige rens. Foreslår automatisk å nevne det på regn-dager.'},
+];
 
-function initCharts(){
-  const wCtx=document.getElementById('weekChart').getContext('2d');
-  weekChart=new Chart(wCtx,{
-    type:currentChartType,
-    data:{labels:weekLabels,datasets:[
-      {label:'Anrop',data:weekCalls,backgroundColor:'rgba(13,148,136,0.5)',borderColor:'#0d9488',borderWidth:currentChartType==='line'?2:1,borderRadius:4,tension:0.3,fill:currentChartType==='line'},
-      {label:'Bookinger',data:weekBookings,backgroundColor:'rgba(34,197,94,0.5)',borderColor:'#22c55e',borderWidth:currentChartType==='line'?2:1,borderRadius:4,tension:0.3,fill:currentChartType==='line'}
-    ]},
-    options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:12}}}},
-      scales:{y:{beginAtZero:true,grid:{color:'#1e293b'}},x:{grid:{display:false}}},
-      animation:{duration:600}
-    }
-  });
+const topQuestions = [
+  {q:'Hva koster bremseskift?', count:87, trend:+12},
+  {q:'Har dere ledig denne uka?', count:62, trend:+8},
+  {q:'Tar dere imot oppdrag på fredager?', count:34, trend:0},
+  {q:'Hva inkluderer storservicen?', count:31, trend:+15},
+  {q:'Hvor lenge tar EU-kontroll?', count:28, trend:-3},
+  {q:'Kan jeg vente mens dere jobber?', count:24, trend:+5},
+  {q:'Tilbyr dere lånebil?', count:19, trend:+22},
+  {q:'Skifter dere dekk?', count:17, trend:+45},
+  {q:'Tar dere imot elbil-service?', count:14, trend:+38},
+  {q:'Kan jeg betale med Vipps?', count:11, trend:0},
+];
 
-  const cCtx=document.getElementById('categoryChart').getContext('2d');
-  categoryChart=new Chart(cCtx,{
-    type:'doughnut',
-    data:{labels:['Booking','Prisspørsmål','Åpningstider','Overført','Annet'],
-      datasets:[{data:[483,312,198,89,165],backgroundColor:['#22c55e','#0d9488','#3b82f6','#f59e0b','#6366f1'],borderWidth:0,hoverOffset:6}]},
-    options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}},animation:{duration:600}}
-  });
+// ===== HELPERS =====
+function maskPhone(p){
+  // +47 912 34 567 → +47 912 34 ●●●
+  return p.replace(/(\d{3})$/, '●●●');
 }
 
-function setChartType(type,btn){
-  currentChartType=type;
-  document.querySelectorAll('.chart-toggle button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  weekChart.destroy();
-  const wCtx=document.getElementById('weekChart').getContext('2d');
-  weekChart=new Chart(wCtx,{
-    type,
-    data:{labels:weekLabels,datasets:[
-      {label:'Anrop',data:weekCalls,backgroundColor:'rgba(13,148,136,0.3)',borderColor:'#0d9488',borderWidth:type==='line'?2.5:1,borderRadius:4,tension:0.35,fill:type==='line',pointRadius:type==='line'?4:0,pointBackgroundColor:'#0d9488'},
-      {label:'Bookinger',data:weekBookings,backgroundColor:'rgba(34,197,94,0.3)',borderColor:'#22c55e',borderWidth:type==='line'?2.5:1,borderRadius:4,tension:0.35,fill:type==='line',pointRadius:type==='line'?4:0,pointBackgroundColor:'#22c55e'}
-    ]},
-    options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:12}}}},
-      scales:{y:{beginAtZero:true,grid:{color:'#1e293b'}},x:{grid:{display:false}}},animation:{duration:600}}
-  });
-}
-
-// ===== RENDER FUNCTIONS =====
+// ===== RENDER =====
 function renderKPIs(){
-  const totalCalls=locations.reduce((s,l)=>s+l.calls,0);
-  const totalBookings=locations.reduce((s,l)=>s+l.bookings,0);
-  const avgAnswer=(locations.reduce((s,l)=>s+l.answer,0)/locations.length).toFixed(1);
-  const saved=Math.round(totalBookings*500);
-  const kpis=[
-    {label:'Anrop besvart av AI',value:totalCalls.toLocaleString('nb'),cls:'gradient-teal',change:'+23%',sparks:[40,55,45,70,85,65,100],sparkColor:'var(--teal)'},
-    {label:'Bookinger gjort',value:totalBookings.toLocaleString('nb'),cls:'gradient-green',change:'+18%',sparks:[50,65,55,80,72,90,100],sparkColor:'var(--green)'},
-    {label:'Svarrate',value:avgAnswer+'%',cls:'',change:'+2.1pp',sparks:[92,94,93,96,95,98,100],sparkColor:'var(--blue)'},
-    {label:'Estimert spart omsetning',value:saved.toLocaleString('nb')+' kr',cls:'gradient-amber',change:'+31%',sparks:[35,50,60,55,75,85,100],sparkColor:'var(--amber)'},
-  ];
-  document.getElementById('kpiRow').innerHTML=kpis.map((k,i)=>`
-    <div class="kpi-card" onclick="showKpiDetail(${i})">
-      <div class="label">${k.label}</div>
-      <div class="value ${k.cls}">${k.value}</div>
-      <div class="change up">▲ ${k.change} vs forrige uke</div>
-      <div class="spark-row">${k.sparks.map(h=>`<div class="spark-bar" style="height:${h}%;background:${k.sparkColor}"></div>`).join('')}</div>
+  const totalCalls = locations.reduce((s,l)=>s+l.calls,0);
+  const totalBookings = locations.reduce((s,l)=>s+l.bookings,0);
+  const avgAnswer = (locations.reduce((s,l)=>s+l.answer,0)/locations.length).toFixed(1);
+  const saved = totalBookings * 540;
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi featured" onclick="showKpiDetail(0)">
+      <div class="kpi-top"><span class="kpi-label">Anrop besvart</span><div class="kpi-arrow">↗</div></div>
+      <div class="kpi-num">${totalCalls.toLocaleString('nb')}</div>
+      <div class="kpi-foot"><span class="delta">+23%</span> vs forrige uke</div>
     </div>
-  `).join('');
-}
-
-function renderAISummary(){
-  const total=locations.reduce((s,l)=>s+l.calls,0);
-  const booked=locations.reduce((s,l)=>s+l.bookings,0);
-  const convRate=(booked/total*100).toFixed(1);
-  const missed=total-Math.round(total*0.973);
-  document.getElementById('aiText').innerHTML=`
-    Denne uken har AI-assistenten håndtert <strong>${total.toLocaleString('nb')} anrop</strong> på tvers av alle 14 lokasjoner, opp 23% fra forrige uke.
-    <strong>${booked} bookinger</strong> ble gjort direkte gjennom samtale — det tilsvarer <strong>${convRate}% konverteringsrate</strong>.
-    Estimert spart omsetning fra tapte anrop er <strong>${(booked*500).toLocaleString('nb')} kr</strong>.
-    Svarrate ligger stabilt på <strong>97.3%</strong>, som betyr at kun ${missed} av ${total.toLocaleString('nb')} anrop ikke ble besvart.<span class="ai-typing"><i></i><i></i><i></i></span>
-  `;
-  document.getElementById('aiInsights').innerHTML=`
-    <div class="ai-insight"><div class="icon">📈</div><div class="title green">Topprestasjon</div><div class="desc">Lillestrøm har høyest konverteringsrate denne uken med 47.3% — 22% over snittet. Vurder å bruke deres mønster som mal.</div></div>
-    <div class="ai-insight"><div class="icon">⚠️</div><div class="title amber">Trenger oppmerksomhet</div><div class="desc">Stovner og Tveita har lavere konvertering (35–36%). Flest prisspørsmål — vurder bedre pristilbud i AI-skriptet.</div></div>
-    <div class="ai-insight"><div class="icon">💡</div><div class="title blue">Anbefaling</div><div class="desc">312 prisspørsmål uten booking. Legg til «book nå med 10% rabatt» for å konvertere 15–20% av disse.</div></div>
+    <div class="kpi" onclick="showKpiDetail(1)">
+      <div class="kpi-top"><span class="kpi-label">Bookinger gjort</span><div class="kpi-arrow">↗</div></div>
+      <div class="kpi-num">${totalBookings.toLocaleString('nb')}</div>
+      <div class="kpi-foot"><span class="delta">+18%</span> vs forrige uke</div>
+    </div>
+    <div class="kpi" onclick="showKpiDetail(2)">
+      <div class="kpi-top"><span class="kpi-label">Svarrate</span><div class="kpi-arrow">↗</div></div>
+      <div class="kpi-num">${avgAnswer.split('.')[0]}<span style="font-size:28px;">.${avgAnswer.split('.')[1]}%</span></div>
+      <div class="kpi-foot"><span class="delta">+2.1pp</span> vs forrige uke</div>
+    </div>
+    <div class="kpi" onclick="showKpiDetail(3)">
+      <div class="kpi-top"><span class="kpi-label">Spart omsetning</span><div class="kpi-arrow">↗</div></div>
+      <div class="kpi-num" style="font-size:36px;">${saved.toLocaleString('nb')} <span style="font-size:18px;color:var(--text-muted);">kr</span></div>
+      <div class="kpi-foot"><span class="delta">+31%</span> vs forrige uke</div>
+    </div>
   `;
 }
 
-let sortField='name',sortAsc=true;
-function renderLocations(filter=''){
-  let data=[...locations];
-  if(filter)data=data.filter(l=>l.name.toLowerCase().includes(filter.toLowerCase()));
-  data.sort((a,b)=>{
-    let va=a[sortField],vb=b[sortField];
-    if(typeof va==='string')return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
-    return sortAsc?va-vb:vb-va;
-  });
-  document.getElementById('locationTable').innerHTML=data.map(l=>{
-    const statusLabel=l.status==='green'?'Aktiv':l.status==='amber'?'Lav konv.':'Problem';
-    const fillColor=l.rate>40?'var(--green)':l.rate>36?'var(--teal)':'var(--amber)';
-    return`<tr onclick="showLocationDetail('${l.name}')">
-      <td style="font-weight:600">${l.name}</td>
-      <td>${l.calls}</td><td>${l.bookings}</td>
-      <td>${l.rate}%<div class="progress-bar"><div class="fill" style="width:${l.rate*2}%;background:${fillColor}"></div></div></td>
-      <td>${l.answer}%</td>
-      <td><span class="badge ${l.status}">${statusLabel}</span></td>
-    </tr>`;
+function showKpiDetail(idx){
+  const titles = ['Anrop besvart av AI','Bookinger gjort','Svarrate per lokasjon','Estimert spart omsetning'];
+  const subtitles = ['Rangert per lokasjon — siste 7 dager','Rangert per lokasjon — siste 7 dager','Rangert per lokasjon — siste 7 dager','Beregnet fra tapte anrop som ble fanget opp'];
+  const sorted = [...locations].sort((a,b) => idx===0?b.calls-a.calls : idx===1?b.bookings-a.bookings : idx===2?b.answer-a.answer : b.bookings-a.bookings);
+  const insights = [
+    'AI tok <strong>97.4%</strong> av samtalene. 24 ble ikke besvart pga overbelastet linje (<2%).',
+    '<strong>38.5%</strong> av anrop ender i booking. Lillestrøm leder med 47%.',
+    '<strong>Lillestrøm og Skullerud</strong> har best svarrate (98.4-98.5%). Ingen lokasjon under 95%.',
+    'Anslått <strong>540 kr per booking</strong> som ellers hadde gått tapt. Tallet varierer per service.',
+  ];
+  document.getElementById('detailContent').innerHTML = `
+    <h2>${titles[idx]}</h2>
+    <div class="detail-subtitle">${subtitles[idx]}</div>
+    <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">${insights[idx]}</div>
+    <div class="detail-section" style="margin-top:18px"><h4>Per lokasjon</h4>
+      ${sorted.map((l,i)=>{
+        const val = idx===0?l.calls : idx===1?l.bookings : idx===2?l.answer+'%' : (l.bookings*540).toLocaleString('nb')+' kr';
+        return `<div class="detail-call"><span class="rank" style="color:var(--text-muted);font-weight:700;min-width:24px;">#${i+1}</span><span style="font-weight:600">${l.name}</span><span style="color:var(--text-muted);font-size:11px;margin-left:6px;">— ${l.mgr}</span><span style="margin-left:auto;color:var(--green);font-weight:700">${val}</span></div>`;
+      }).join('')}
+    </div>`;
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function renderFocus(){
+  document.getElementById('focusList').innerHTML = sjefensFokus.map((f,i)=>`
+    <div class="proj-item" onclick="showFocusDetail(${i})">
+      <div class="proj-icon ${f.type}">${f.emoji}</div>
+      <div class="proj-text">
+        <div class="title">${f.title}</div>
+        <div class="due">${f.due}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderRecentCalls(){
+  document.getElementById('recentCallsList').innerHTML = recentCalls.slice(0,4).map(c=>`
+    <div class="call-row" onclick="showCallDetail('${c.name}')">
+      <div class="call-avatar" style="background:linear-gradient(135deg,${c.color});">${c.name.split(' ').map(s=>s[0]).join('').slice(0,2)}</div>
+      <div class="call-info">
+        <div class="name">${c.name}</div>
+        <div class="desc">${c.desc}</div>
+      </div>
+      <div class="call-status ${c.type==='booked'?'booked':c.type==='info'?'info':'transfer'}">${c.type==='booked'?'Booket':c.type==='info'?'Info':'Overført'}</div>
+    </div>`).join('');
+}
+
+function renderTopQuestions(){
+  const max = topQuestions[0].count;
+  document.getElementById('topQuestions').innerHTML = topQuestions.map((q,i)=>{
+    const trendStr = q.trend===0 ? '→ 0%' : (q.trend>0?`↗ +${q.trend}%`:`↘ ${q.trend}%`);
+    const trendCls = q.trend===0 ? '' : (q.trend>0?'up':'down');
+    return `<div class="question-item" onclick="showQuestionDetail(${i})">
+      <span class="question-rank ${i<3?'top':''}">${i+1}</span>
+      <span class="question-text">${q.q}</span>
+      <span class="question-bar-wrap"><span class="question-bar" style="width:${(q.count/max)*100}%"></span></span>
+      <span class="question-count">${q.count}</span>
+      <span class="question-trend ${trendCls}">${trendStr}</span>
+    </div>`;
   }).join('');
 }
 
-function renderCalls(){
-  document.getElementById('recentCalls').innerHTML=recentCalls.map(c=>`
-    <div class="call-item" onclick="showCallDetail('${c.name}')">
-      <div class="call-icon ${c.type}">${c.icon}</div>
-      <div class="call-meta">
-        <div class="top"><span class="name">${c.name}</span><span class="time">${c.time}</span></div>
-        <div class="desc">${c.loc} — ${c.desc}</div>
-        <div class="tags"><span class="tag">${c.dur}</span><span class="tag">${c.type==='booked'?'Booket':c.type==='info'?'Info':'Overført'}</span></div>
+function renderAILog(){
+  document.getElementById('aiActionLog').innerHTML = aiActions.map(a=>`
+    <div class="ai-log-item">
+      <div class="ai-log-time">${a.time}</div>
+      <div class="ai-log-content">
+        <div class="event">✦ ${a.event}</div>
+        <div class="detail">${a.detail}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderLocationTable(){
+  document.getElementById('locationTable').innerHTML = locations.map(l=>`
+    <tr onclick="showLocationDetail('${l.name}')">
+      <td><strong>${l.name}</strong></td>
+      <td>${l.mgr}</td>
+      <td>${l.calls}</td>
+      <td>${l.bookings}</td>
+      <td>${l.rate}%</td>
+      <td>${l.answer}%</td>
+      <td><span class="badge ${l.status}">${l.status==='green'?'Aktiv':'Lav konv.'}</span></td>
+    </tr>`).join('');
+  document.getElementById('locDetailTable').innerHTML = locations.map(l=>`
+    <tr onclick="showLocationDetail('${l.name}')">
+      <td><strong>${l.name}</strong></td>
+      <td>${l.addr}</td>
+      <td>${l.mgr}</td>
+      <td>${l.calls}</td>
+      <td>${l.bookings}</td>
+      <td>${l.rate}%</td>
+      <td><span class="badge ${l.status}">${l.status==='green'?'Aktiv':'Lav konv.'}</span></td>
+    </tr>`).join('');
+}
+
+function renderCustomers(){
+  document.getElementById('customerTable').innerHTML = customers.map(c=>`
+    <tr onclick="showCustomerPortal('${c.name}')">
+      <td><strong>${c.name}</strong>${c.vip?' <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;font-weight:700;margin-left:4px;">VIP</span>':''}</td>
+      <td>${maskPhone(c.phone)}</td>
+      <td>${c.loc}</td>
+      <td>${c.service}</td>
+      <td>${c.last}</td>
+      <td>${c.count}</td>
+    </tr>`).join('');
+}
+
+// === CUSTOMER PORTAL ===
+function showCustomerPortal(name){
+  const c = customers.find(x=>x.name===name);
+  if(!c) return;
+  // Beregn dager til EU-kontroll utløper
+  const today = new Date('2026-04-24');
+  const eu = new Date(c.euDato);
+  const daysToEU = Math.round((eu - today)/(1000*60*60*24));
+  const euStatus = daysToEU < 0 ? `Utløpt for ${-daysToEU} dager siden` : daysToEU < 60 ? `Utløper om ${daysToEU} dager` : `Gyldig til ${c.euDato}`;
+  const euUrgent = daysToEU < 60;
+
+  // Fake service-historikk basert på count og bil
+  const history = [];
+  const services = ['EU-kontroll','Oljeskift','Bremseskift','Service','Dekkskifte','Storservice'];
+  let baseDate = new Date('2026-04-20');
+  for(let i=0;i<c.count;i++){
+    const d = new Date(baseDate);
+    d.setMonth(d.getMonth() - (i*3 + Math.floor(Math.random()*2)));
+    history.push({
+      date: d.toISOString().slice(0,10),
+      service: i===0 ? c.service : services[Math.floor(Math.random()*services.length)],
+      pris: [890, 1490, 2890, 3490, 4290, 1290][Math.floor(Math.random()*6)],
+    });
+  }
+
+  const initials = c.name.split(' ').map(s=>s[0]).join('').slice(0,2);
+
+  document.getElementById('detailContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#fb923c,#f97316);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;flex-shrink:0;">${initials}</div>
+      <div style="flex:1;min-width:0;">
+        <h2 style="margin-bottom:2px;">${c.name} ${c.vip?'<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:700;margin-left:4px;vertical-align:middle;">VIP</span>':''}</h2>
+        <div style="font-size:13px;color:var(--text-muted);">${maskPhone(c.phone)} · ${c.loc}</div>
       </div>
     </div>
-  `).join('');
+
+    <div class="detail-section" style="margin-top:18px;">
+      <h4>Kjøretøy</h4>
+      <div style="background:#fafaf7;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;">
+        <div style="font-weight:700;font-size:14px;margin-bottom:2px;">${c.bil}</div>
+        <div style="color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:12px;">${c.regnr}</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>EU-kontroll</h4>
+      <div style="background:${euUrgent?'#fef3c7':'#fafaf7'};border:1px solid ${euUrgent?'#fde68a':'var(--border)'};border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:600;font-size:13px;">${euStatus}</div>
+          <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">Bli ferdig før utløp</div>
+        </div>
+        ${euUrgent?'<span style="font-size:18px;">⚠️</span>':'<span style="font-size:18px;color:var(--green);">✓</span>'}
+      </div>
+    </div>
+
+    <div class="detail-stat-grid">
+      <div class="detail-stat"><div class="label">Bookinger totalt</div><div class="val" style="color:var(--green)">${c.count}</div></div>
+      <div class="detail-stat"><div class="label">Total omsetning</div><div class="val">${c.totalKr.toLocaleString('nb')} kr</div></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Send melding · automatisk</h4>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <button onclick="sendSMS('${c.name}','eu')" style="background:${euUrgent?'var(--amber)':'var(--green)'};color:#fff;border:none;padding:11px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+          <span>📅 EU-kontroll-påminnelse</span><span style="font-size:11px;opacity:0.85;">${euUrgent?'Anbefalt':'Send'}</span>
+        </button>
+        <button onclick="sendSMS('${c.name}','service')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+          <span>🔧 Service-påminnelse</span><span style="font-size:11px;color:var(--text-muted);">Hver 12. mnd</span>
+        </button>
+        <button onclick="sendSMS('${c.name}','dekk')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+          <span>🛞 Dekk-skift sesong</span><span style="font-size:11px;color:var(--text-muted);">Vår/høst</span>
+        </button>
+        <button onclick="sendSMS('${c.name}','tilbud')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+          <span>🎁 Spesialtilbud</span><span style="font-size:11px;color:var(--text-muted);">10% rabatt</span>
+        </button>
+        <button onclick="sendSMS('${c.name}','egendefinert')" style="background:#fff;border:1.5px dashed var(--border);color:var(--text-muted);padding:11px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;text-align:center;">
+          ✏️ Egendefinert melding
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Service-historikk</h4>
+      ${history.map(h => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#fafaf7;border-radius:8px;margin-bottom:4px;font-size:12.5px;">
+          <div>
+            <div style="font-weight:600;">${h.service}</div>
+            <div style="color:var(--text-muted);font-size:11px;">${h.date}</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">${h.pris.toLocaleString('nb')} kr</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-section">
+      <h4>Andre handlinger</h4>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="showToast('Ringer ${maskPhone(c.phone)}...')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:8px 14px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;">📞 Ring kunde</button>
+        ${c.vip?'':`<button onclick="markVIP('${c.name}')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:8px 14px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;">⭐ Marker VIP</button>`}
+        <button onclick="showToast('Notat lagret')" style="background:#fff;border:1.5px solid var(--border);color:var(--text);padding:8px 14px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;">📝 Legg til notat</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function sendSMS(name, type){
+  const c = customers.find(x=>x.name===name);
+  if(!c) return;
+  const fornavn = name.split(' ')[0];
+  const templates = {
+    eu: `Hei ${fornavn}! EU-kontrollen på ${c.bil} (${c.regnr}) går ut snart. Vil du booke time hos oss på Mekkern ${c.loc}? Svar JA for ledig tid neste uke. Mvh Mekkern`,
+    service: `Hei ${fornavn}! Det nærmer seg service på ${c.bil}. Vi har ledige tider denne uka — svar TID for å se alternativer. Mvh Mekkern ${c.loc}`,
+    dekk: `Hei ${fornavn}! Dekkskift-sesongen er her. Vi har ledig kapasitet på Mekkern ${c.loc} kommende uker. Svar BOOK for å bestille. Mvh Mekkern`,
+    tilbud: `Hei ${fornavn}! Som stamkunde får du 10% rabatt på neste service hos Mekkern ${c.loc}. Gjelder ut april. Svar JA for å bestille time. Mvh Mekkern`,
+    egendefinert: 'Skriv din egen melding...'
+  };
+  const labels = {eu:'EU-kontroll-påminnelse', service:'Service-påminnelse', dekk:'Dekk-skift', tilbud:'Spesialtilbud', egendefinert:'Egendefinert melding'};
+  if(type === 'egendefinert'){
+    showToast(`✏️ Åpner SMS-editor for ${fornavn}`);
+    return;
+  }
+  showToast(`✅ ${labels[type]} sendt til ${maskPhone(c.phone)}`);
+  setTimeout(()=>showToast(`📱 SMS leveres: "${templates[type].slice(0,60)}..."`), 2700);
+}
+
+// === KPI DETAIL PANELS for Kunder & Lokasjoner ===
+function showKunderKpi(idx){
+  const totalCustomers = customers.length; // bruker som proxy for 847
+  const titles = ['Totalt registrerte kunder','Nye kunder denne uka','Gjengangere — stamkunder','Snitt bookinger per kunde'];
+  const subtitles = ['Bygd opp gjennom AI-samtaler siden januar 2026','Førstegangs-anrop som AI registrerte','Kunder med 2+ bookinger siste 6 mnd','Hvor ofte kunder kommer tilbake'];
+  let body = '';
+  if(idx===0){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        <strong>847 aktive kunder</strong> i databasen. AI registrerer alle som ringer — selv de som ikke booker — slik at dere kan følge opp senere.
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Fordelt per lokasjon</h4>
+        ${locations.map(l => {
+          const share = Math.round(847 * (l.calls/916));
+          return `<div class="detail-call"><span style="font-weight:600;flex:1">${l.name}</span><span style="color:var(--text-muted);font-size:11px;margin-left:6px;">${l.mgr}</span><span style="margin-left:auto;color:var(--green);font-weight:700">${share}</span></div>`;
+        }).join('')}
+      </div>
+      <div class="detail-section"><h4>Vekst</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Database vokser med <strong style="color:var(--green)">~62 nye kunder</strong> per uke. Ved nåværende rate når dere <strong>1 200 kunder</strong> innen sommeren.</div>
+      </div>`;
+  } else if(idx===1){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        <strong>62 nye kunder</strong> denne uka — opp 14% fra forrige uke. Stigningen kommer hovedsakelig fra Lambertseter og Bryn (etter Marius gravde dypere i lokal SEO).
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Hvordan fant de oss?</h4>
+        <div class="detail-call"><span style="font-weight:600;flex:1">📞 Direkte telefon</span><span style="color:var(--green);font-weight:700">38</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">🔍 Google-søk</span><span style="color:var(--green);font-weight:700">14</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">👥 Anbefalt av venn</span><span style="color:var(--green);font-weight:700">7</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">📱 Facebook/Instagram</span><span style="color:var(--green);font-weight:700">3</span></div>
+      </div>
+      <div class="detail-section"><h4>💡 Innsikt</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6">61% av nye kunder ringer direkte uten å være i Google først. Det betyr at <strong>lokal anbefaling</strong> driver mer enn web-tilstedeværelse for dere.</div>
+      </div>`;
+  } else if(idx===2){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        <strong>34% av aktive kunder</strong> har booket 2+ ganger siste 6 måneder. Det er sterk lojalitet for bilverksted-bransjen.
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Topp 5 stamkunder</h4>
+        ${[...customers].sort((a,b)=>b.count-a.count).slice(0,5).map((c,i) => `
+          <div class="detail-call" onclick="closeDetail();showCustomerPortal('${c.name}')" style="cursor:pointer">
+            <span style="color:var(--text-muted);font-weight:700;width:24px">#${i+1}</span>
+            <span style="font-weight:600">${c.name}</span>
+            ${c.vip?'<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px;">VIP</span>':''}
+            <span style="margin-left:auto;color:var(--green);font-weight:700">${c.count} ganger</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="detail-section"><h4>💡 Foreslått handling</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6"><strong>Anne Bakken</strong> har 7 bookinger uten VIP-status. Vurder å markere henne som VIP og sende et takke-tilbud.</div>
+      </div>`;
+  } else {
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        Kunder booker i snitt <strong>2.4 ganger</strong> hos Mekkern. Det er <strong>+38%</strong> over bransjesnitt for bilverksted (~1.7).
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Fordeling</h4>
+        <div class="detail-call"><span style="font-weight:600;flex:1">1 booking (engangs)</span><span style="color:var(--text-muted);font-weight:700">42%</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">2-3 bookinger</span><span style="color:var(--green);font-weight:700">34%</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">4-6 bookinger</span><span style="color:var(--green);font-weight:700">18%</span></div>
+        <div class="detail-call"><span style="font-weight:600;flex:1">7+ bookinger (VIP)</span><span style="color:var(--green);font-weight:700">6%</span></div>
+      </div>
+      <div class="detail-section"><h4>💡 Innsikt</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Hvis vi konverterer halvparten av engangs-kunder (42%) til 2+ bookinger, øker snittet til 3.1.</div>
+      </div>`;
+  }
+  document.getElementById('detailContent').innerHTML = `<h2>${titles[idx]}</h2><div class="detail-subtitle">${subtitles[idx]}</div>${body}`;
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function showLokKpi(idx){
+  const titles = ['Aktive lokasjoner','Snitt svarrate','Beste lokasjon — Lillestrøm','Trenger oppmerksomhet — Tveita'];
+  let body = '';
+  if(idx===0){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        Alle 8 lokasjoner er online og AI-en svarer på samtaler 24/7. Ingen tekniske avbrudd siste uke.
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Status per lokasjon</h4>
+        ${locations.map(l => `<div class="detail-call" onclick="closeDetail();showLocationDetail('${l.name}')" style="cursor:pointer"><span style="font-weight:600">${l.name}</span><span style="color:var(--text-muted);font-size:11px;margin-left:6px;">${l.mgr}</span><span style="margin-left:auto;"><span class="badge ${l.status}">${l.status==='green'?'Aktiv':'Lav konv.'}</span></span></div>`).join('')}
+      </div>`;
+  } else if(idx===1){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        AI svarer <strong>97.4%</strong> av alle samtaler. De ubesvarte er typisk pga overbelastet linje (samtidige innringinger).
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Rangert per lokasjon</h4>
+        ${[...locations].sort((a,b)=>b.answer-a.answer).map((l,i) => `<div class="detail-call"><span style="color:var(--text-muted);font-weight:700;width:24px">#${i+1}</span><span style="font-weight:600">${l.name}</span><span style="margin-left:auto;color:var(--green);font-weight:700">${l.answer}%</span></div>`).join('')}
+      </div>`;
+  } else if(idx===2){
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        <strong>Lillestrøm</strong> leder med <strong>47.2%</strong> konvertering — 22% over kjede-snittet. Mønsteret? Manager Trond Berg starter alltid samtalen med "hva slags bil snakker vi om" før pris diskuteres.
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Topp 5 konvertering</h4>
+        ${[...locations].sort((a,b)=>b.rate-a.rate).slice(0,5).map((l,i) => `<div class="detail-call"><span style="color:var(--text-muted);font-weight:700;width:24px">#${i+1}</span><span style="font-weight:600">${l.name}</span><span style="color:var(--text-muted);font-size:11px;margin-left:6px;">${l.mgr}</span><span style="margin-left:auto;color:var(--green);font-weight:700">${l.rate}%</span></div>`).join('')}
+      </div>
+      <div class="detail-section"><h4>💡 Anbefaling</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Vurder å innføre Trond's "bil-først"-skript på alle lokasjoner. Hvis det øker andre med selv 3pp, betyr det 27 ekstra bookinger per uke.</div>
+      </div>`;
+  } else {
+    body = `
+      <div style="margin-top:14px;padding:14px 16px;background:#fffbeb;border-left:4px solid var(--amber);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.6;">
+        <strong>Tveita</strong> har lavest konvertering (<strong>34.7%</strong>). Hovedårsak: AI mangler skript for elbil-service, og 3 lange samtaler i går kveld endte uten booking.
+      </div>
+      <div class="detail-section" style="margin-top:18px"><h4>Detaljer</h4>
+        <div class="detail-stat-grid">
+          <div class="detail-stat"><div class="label">Anrop denne uka</div><div class="val">95</div></div>
+          <div class="detail-stat"><div class="label">Bookinger</div><div class="val" style="color:var(--amber)">33</div></div>
+          <div class="detail-stat"><div class="label">Konvertering</div><div class="val" style="color:var(--amber)">34.7%</div></div>
+          <div class="detail-stat"><div class="label">Manager</div><div class="val" style="font-size:14px">Lars Pettersen</div></div>
+        </div>
+      </div>
+      <div class="detail-section"><h4>💡 Foreslåtte tiltak</h4>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+          <strong>1.</strong> Legg til elbil-service skript i AI-en (samme som Lambertseter har).<br>
+          <strong>2.</strong> Send "kom tilbake"-tilbud til de 18 kundene som ringte uten å booke siste 2 uker.<br>
+          <strong>3.</strong> Be Lars Pettersen kjøre en lyttesesjon på de 3 lange samtalene fra i går.
+        </div>
+      </div>`;
+  }
+  document.getElementById('detailContent').innerHTML = `<h2>${titles[idx]}</h2>${body}`;
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function markVIP(name){
+  const c = customers.find(x=>x.name===name);
+  if(!c) return;
+  c.vip = true;
+  renderCustomers();
+  showToast(`⭐ ${name} markert som VIP-kunde`);
+  showCustomerPortal(name);
 }
 
 function renderTranscripts(){
-  document.getElementById('transcriptList').innerHTML=transcripts.map(t=>`
-    <div class="transcript-card" onclick="showTranscriptDetail('${t.caller}')">
+  document.getElementById('transcriptList').innerHTML = transcripts.map((t,i)=>`
+    <div class="transcript-card">
       <div class="transcript-header">
         <span class="caller">${t.caller} — ${t.loc}</span>
         <span class="dur">${t.dur}</span>
       </div>
       <div class="transcript-body">${t.lines.slice(0,3).map(l=>`<span class="${l.who}">${l.who==='ai'?'🤖':'👤'} ${l.text}</span>`).join('<br>')}<br><span style="color:var(--text-muted)">... klikk for å se hele samtalen</span></div>
+      <div class="audio-bar" onclick="event.stopPropagation();toggleAudio(this,${i},'${t.dur}')">
+        <button class="play-btn">▶</button>
+        <div class="audio-waveform">${Array.from({length:36}).map((_,j)=>`<div class="wb" style="height:${20+Math.abs(Math.sin(i*7+j*0.7))*60}%"></div>`).join('')}</div>
+        <div class="audio-time">0:00 / ${t.dur}</div>
+      </div>
       <div class="transcript-tags"><span class="tag">${t.type==='booking'?'📅 Booking':'ℹ️ Info'}</span><span class="tag">${t.loc}</span></div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function renderBookings(){
-  document.getElementById('bookingList').innerHTML=bookings.map(b=>`
+  document.getElementById('bookingList').innerHTML = bookings.map(b=>`
     <div class="booking-item" onclick="showToast('Booking: ${b.name} — ${b.service} kl ${b.time}')">
       <div class="booking-left">
         <div class="booking-time">${b.time}</div>
-        <div class="booking-info"><div class="booking-name">${b.name}</div><div class="booking-service">${b.service}</div></div>
+        <div><div class="booking-name">${b.name}</div><div class="booking-service">${b.service}</div></div>
       </div>
       <div class="booking-loc">📍 ${b.loc}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
-function renderLocDetail(){
-  document.getElementById('locDetailTable').innerHTML=locations.map(l=>`
-    <tr onclick="showLocationDetail('${l.name}')" style="cursor:pointer">
-      <td style="font-weight:600">${l.name}</td><td>${l.addr}</td><td>${Math.round(l.calls/7)}</td><td>${l.answer}%</td>
-      <td><span class="badge ${l.status}">${l.status==='green'?'Aktiv':'Lav konv.'}</span></td>
-    </tr>
-  `).join('');
-}
-
-function renderCustomers(filter=''){
-  let data=filter?customers.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())||c.loc.toLowerCase().includes(filter.toLowerCase())):customers;
-  document.getElementById('customerTable').innerHTML=data.map(c=>`
-    <tr onclick="showToast('Kunde: ${c.name} — ${c.count} bookinger')">
-      <td style="font-weight:600">${c.name}</td><td style="color:var(--text-muted)">${c.phone}</td><td>${c.loc}</td><td>${c.service}</td><td>${c.last}</td>
-      <td><span style="background:var(--teal-glow);color:var(--teal-light);padding:3px 10px;border-radius:6px;font-weight:700;font-size:12px">${c.count}</span></td>
-    </tr>
-  `).join('');
-}
-function filterCustomers(q){renderCustomers(q);}
 
 function renderReports(){
-  document.getElementById('reportList').innerHTML=reports.map(r=>`
-    <div class="report-card" onclick="showReportDetail('${r.title}')">
-      <div class="report-left">
-        <div class="report-icon ${r.type}">${r.type==='weekly'?'📋':'📊'}</div>
-        <div class="report-info">
-          <div class="report-title">${r.title}</div>
-          <div class="report-meta">${r.date} — ${r.summary.substring(0,60)}...</div>
+  document.getElementById('reportList').innerHTML = reports.map(r=>`
+    <div class="report-row" onclick="generateReport('${r.type==='weekly'?'week':'month'}')">
+      <div class="report-row-left">
+        <div class="report-row-icon ${r.type}">${r.type==='weekly'?'📋':'📊'}</div>
+        <div class="report-row-info">
+          <div class="title">${r.title}</div>
+          <div class="meta">${r.date} — ${r.summary.substring(0,60)}...</div>
         </div>
       </div>
-      <span class="report-badge ${r.status}">${r.status==='new'?'Ny':'Lest'}</span>
-    </div>
-  `).join('');
-}
-
-function showReportDetail(title){
-  const r=reports.find(x=>x.title===title);if(!r)return;
-  const panel=document.getElementById('detailPanel');
-  document.getElementById('detailContent').innerHTML=`
-    <h2>${r.title}</h2>
-    <div class="detail-subtitle">${r.date} — ${r.type==='weekly'?'Ukentlig rapport':'Månedsrapport'}</div>
-    <div class="detail-section" style="margin-top:16px">
-      <div class="ai-summary" style="margin:0;cursor:default" onclick="event.stopPropagation()">
-        <div class="ai-summary-header"><span class="ai-badge"><span class="sparkle">✦</span> AI-sammendrag</span></div>
-        <div class="ai-summary-body"><div class="ai-summary-text">${r.summary}</div></div>
-      </div>
-    </div>
-    <div class="detail-stat-grid" style="margin-top:16px">
-      <div class="detail-stat"><div class="label">Anrop</div><div class="val" style="color:var(--teal-light)">${r.type==='monthly'?'3 842':'1 247'}</div></div>
-      <div class="detail-stat"><div class="label">Bookinger</div><div class="val" style="color:var(--green)">${r.type==='monthly'?'1 488':'483'}</div></div>
-      <div class="detail-stat"><div class="label">Svarrate</div><div class="val">${r.type==='monthly'?'96.1%':'97.3%'}</div></div>
-      <div class="detail-stat"><div class="label">Spart omsetning</div><div class="val" style="color:var(--amber)">${r.type==='monthly'?'744K':'241K'}</div></div>
-    </div>
-    <div class="detail-section" style="margin-top:16px"><h4>Topp 3 lokasjoner</h4>
-      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#1</span><span style="font-weight:600">Lillestrøm</span><span style="margin-left:auto;color:var(--green);font-weight:700">47.3%</span></div>
-      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#2</span><span style="font-weight:600">Lørenskog</span><span style="margin-left:auto;color:var(--green);font-weight:700">40.7%</span></div>
-      <div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#3</span><span style="font-weight:600">Lambertseter</span><span style="margin-left:auto;color:var(--green);font-weight:700">40.2%</span></div>
-    </div>
-  `;
-  panel.classList.add('open');
+      <span class="report-row-badge ${r.status}">${r.status==='new'?'Ny':'Lest'}</span>
+    </div>`).join('');
 }
 
 // ===== INTERACTIONS =====
 function switchPage(pageId,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+pageId).classList.add('active');
-  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
   if(el)el.classList.add('active');
   closeDetail();
-  document.querySelector('.main').scrollTop=0;
 }
 
-function toggleAiSummary(){document.getElementById('aiSummary').classList.toggle('collapsed');}
-
-function sortTable(field){
-  if(sortField===field)sortAsc=!sortAsc;else{sortField=field;sortAsc=true;}
-  document.querySelectorAll('thead th').forEach(th=>th.classList.remove('sorted'));
-  renderLocations();
-}
-function filterLocations(q){renderLocations(q);}
-
-function filterData(){
-  const loc=document.getElementById('locationFilter').value;
-  const time=document.getElementById('timeFilter').value;
-  const mult=time==='today'?0.15:time==='30d'?4.2:time==='month'?3.8:1;
-  showToast(`Filter: ${loc==='all'?'Alle lokasjoner':loc} — ${document.getElementById('timeFilter').selectedOptions[0].text}`);
-  renderKPIs();renderAISummary();
+function showFocusDetail(i){
+  const f = sjefensFokus[i];
+  document.getElementById('detailContent').innerHTML = `
+    <h2>${f.emoji} ${f.title}</h2>
+    <div class="detail-subtitle">${f.due}</div>
+    <div style="margin-top:14px;padding:14px 16px;background:var(--green-pale);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;">${f.desc}</div>
+    <div class="detail-section" style="margin-top:14px"><h4>Anbefalt handling</h4>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">${f.type==='win'?'Del med teamet — denne typen mønstre er gull. Vurder å dokumentere hvordan det ble oppnådd.':f.type==='risk'?'Se på dette i dag. AI kan trenes på spesifikt skript for å adressere dette mønsteret.':'Vurder oppfølging — det kan være en stamkunde eller et tilbakevendende mønster.'}</div>
+    </div>`;
+  document.getElementById('detailPanel').classList.add('open');
 }
 
-function showLocationDetail(name){
-  const l=locations.find(x=>x.name===name);if(!l)return;
-  const panel=document.getElementById('detailPanel');
-  const locCalls=recentCalls.filter(c=>c.loc===name);
-  document.getElementById('detailContent').innerHTML=`
-    <h2>${l.name}</h2>
-    <div class="detail-subtitle">📍 ${l.addr} — <span class="badge ${l.status}" style="vertical-align:middle">${l.status==='green'?'Aktiv':'Lav konv.'}</span></div>
-    <div class="detail-stat-grid">
-      <div class="detail-stat"><div class="label">Anrop</div><div class="val" style="color:var(--teal-light)">${l.calls}</div></div>
-      <div class="detail-stat"><div class="label">Bookinger</div><div class="val" style="color:var(--green)">${l.bookings}</div></div>
-      <div class="detail-stat"><div class="label">Konvertering</div><div class="val">${l.rate}%</div></div>
-      <div class="detail-stat"><div class="label">Svarrate</div><div class="val">${l.answer}%</div></div>
+function showQuestionDetail(idx){
+  const q = topQuestions[idx];
+  const trendDisp = q.trend===0?'uendret':(q.trend>0?`opp ${q.trend}%`:`ned ${Math.abs(q.trend)}%`);
+  document.getElementById('detailContent').innerHTML = `
+    <h2>"${q.q}"</h2>
+    <div class="detail-subtitle">Stilt ${q.count} ganger denne uka — ${trendDisp} fra forrige uke</div>
+    <div class="detail-stat-grid" style="margin-top:14px">
+      <div class="detail-stat"><div class="label">Siste 7 dager</div><div class="val" style="color:var(--green)">${q.count}</div></div>
+      <div class="detail-stat"><div class="label">Snitt per dag</div><div class="val">${(q.count/7).toFixed(1)}</div></div>
     </div>
-    <div class="detail-section"><h4>Siste samtaler herfra</h4>
-      ${locCalls.length?locCalls.map(c=>`<div class="detail-call"><div class="dot" style="background:${c.type==='booked'?'var(--green)':c.type==='info'?'var(--blue)':'var(--amber)'}"></div>${c.name} — ${c.desc}<span style="margin-left:auto;color:var(--text-muted);font-size:11px">${c.time}</span></div>`).join(''):'<div style="color:var(--text-muted);font-size:13px">Ingen samtaler akkurat nå</div>'}
-    </div>
-  `;
-  panel.classList.add('open');
+    <div class="detail-section" style="margin-top:14px"><h4>💡 Foreslått handling</h4>
+      <div style="font-size:13px;line-height:1.6;color:var(--text-muted);background:var(--green-pale);border-radius:10px;padding:14px">
+        ${q.trend>=10?'Dette spørsmålet trender oppover. Vurder å legge inn et tydelig svar i AI-skriptet eller på nettsiden.':q.trend<=-10?'Etterspørselen er dalende — kanskje noe har endret seg i markedet.':'Stabilt etterspurt. Sørg for at AI-en har et godt, oppdatert svar.'}
+      </div>
+    </div>`;
+  document.getElementById('detailPanel').classList.add('open');
 }
 
 function showCallDetail(name){
-  const c=recentCalls.find(x=>x.name===name);if(!c)return;
-  const t=transcripts.find(x=>x.caller===name);
-  const panel=document.getElementById('detailPanel');
-  document.getElementById('detailContent').innerHTML=`
+  const c = recentCalls.find(x=>x.name===name);
+  if(!c) return;
+  const t = transcripts.find(x=>x.caller===name);
+  document.getElementById('detailContent').innerHTML = `
     <h2>${c.name}</h2>
-    <div class="detail-subtitle">📍 ${c.loc} — ${c.time} — ${c.dur}</div>
+    <div class="detail-subtitle">📍 ${c.loc} — ${c.dur} — ${c.time}</div>
     <div class="detail-stat-grid">
-      <div class="detail-stat"><div class="label">Type</div><div class="val" style="font-size:16px;color:${c.type==='booked'?'var(--green)':c.type==='info'?'var(--blue)':'var(--amber)'}">${c.type==='booked'?'Booking':c.type==='info'?'Info':'Overført'}</div></div>
-      <div class="detail-stat"><div class="label">Varighet</div><div class="val" style="font-size:16px">${c.dur}</div></div>
+      <div class="detail-stat"><div class="label">Type</div><div class="val" style="color:var(--green);font-size:16px;">${c.type==='booked'?'Booking':c.type==='info'?'Info':'Overført'}</div></div>
+      <div class="detail-stat"><div class="label">Varighet</div><div class="val" style="font-size:16px;">${c.dur}</div></div>
     </div>
-    ${t?`<div class="detail-section"><h4>Transkripsjon</h4>${t.lines.map(l=>`<div class="detail-call" style="border-left:3px solid ${l.who==='ai'?'var(--teal)':'var(--blue)'};margin-bottom:6px"><span style="color:${l.who==='ai'?'var(--teal-light)':'var(--text)'}">${l.who==='ai'?'🤖 AI':'👤 Kunde'}</span><br><span style="color:var(--text-muted)">${l.text}</span></div>`).join('')}</div>`:'<div style="color:var(--text-muted);font-size:13px;margin-top:12px">Transkripsjon ikke tilgjengelig for denne samtalen</div>'}
-  `;
-  panel.classList.add('open');
+    <div class="detail-section"><h4>Beskrivelse</h4><div style="font-size:13px;color:var(--text);">${c.desc}</div></div>
+    ${t?`<div class="detail-section"><h4>Transkripsjon</h4>${t.lines.map(l=>`<div class="detail-call" style="border-left:3px solid ${l.who==='ai'?'var(--green)':'var(--blue)'};margin-bottom:6px"><span style="color:${l.who==='ai'?'var(--green)':'var(--text)'};font-weight:600">${l.who==='ai'?'🤖 AI':'👤 Kunde'}</span><br><span style="color:var(--text-muted)">${l.text}</span></div>`).join('')}</div>`:''}`;
+  document.getElementById('detailPanel').classList.add('open');
 }
 
-function showTranscriptDetail(caller){
-  const t=transcripts.find(x=>x.caller===caller);if(!t)return;
-  const panel=document.getElementById('detailPanel');
-  document.getElementById('detailContent').innerHTML=`
-    <h2>${t.caller}</h2>
-    <div class="detail-subtitle">📍 ${t.loc} — ${t.dur} — ${t.type==='booking'?'📅 Booking':'ℹ️ Info'}</div>
-    <div class="detail-section"><h4>Full transkripsjon</h4>${t.lines.map(l=>`<div class="detail-call" style="border-left:3px solid ${l.who==='ai'?'var(--teal)':'var(--blue)'};margin-bottom:6px"><span style="color:${l.who==='ai'?'var(--teal-light)':'var(--text)'};font-weight:600">${l.who==='ai'?'🤖 AI':'👤 Kunde'}</span><br><span style="color:var(--text-muted)">${l.text}</span></div>`).join('')}</div>
-  `;
-  panel.classList.add('open');
-}
-
-function showKpiDetail(idx){
-  const titles=['Anrop besvart av AI','Bookinger gjort','Svarrate','Estimert spart omsetning'];
-  const panel=document.getElementById('detailPanel');
-  const sorted=[...locations].sort((a,b)=>idx===0?b.calls-a.calls:idx===1?b.bookings-a.bookings:idx===2?b.answer-a.answer:b.bookings-a.bookings);
-  document.getElementById('detailContent').innerHTML=`
-    <h2>${titles[idx]}</h2>
-    <div class="detail-subtitle">Rangert per lokasjon — siste 7 dager</div>
-    <div class="detail-section">${sorted.map((l,i)=>{
-      const val=idx===0?l.calls:idx===1?l.bookings:idx===2?l.answer+'%':((l.bookings*500).toLocaleString('nb')+' kr');
-      return`<div class="detail-call"><span style="color:var(--text-muted);min-width:20px">#${i+1}</span><span style="font-weight:600">${l.name}</span><span style="margin-left:auto;color:var(--teal-light);font-weight:700">${val}</span></div>`;
-    }).join('')}</div>
-  `;
-  panel.classList.add('open');
+function showLocationDetail(name){
+  const l = locations.find(x=>x.name===name);
+  if(!l) return;
+  document.getElementById('detailContent').innerHTML = `
+    <h2>${l.name}</h2>
+    <div class="detail-subtitle">📍 ${l.addr} — Manager: <strong>${l.mgr}</strong></div>
+    <div class="detail-stat-grid">
+      <div class="detail-stat"><div class="label">Anrop denne uka</div><div class="val" style="color:var(--green)">${l.calls}</div></div>
+      <div class="detail-stat"><div class="label">Bookinger</div><div class="val">${l.bookings}</div></div>
+      <div class="detail-stat"><div class="label">Konvertering</div><div class="val">${l.rate}%</div></div>
+      <div class="detail-stat"><div class="label">Svarrate</div><div class="val">${l.answer}%</div></div>
+    </div>
+    <div class="detail-section"><h4>Status</h4><span class="badge ${l.status}">${l.status==='green'?'Aktiv — alt går bra':'Lav konvertering — trenger oppmerksomhet'}</span></div>`;
+  document.getElementById('detailPanel').classList.add('open');
 }
 
 function closeDetail(){document.getElementById('detailPanel').classList.remove('open');}
 
+// === TOAST ===
 function showToast(msg){
-  const t=document.getElementById('toast');
-  t.innerHTML='<span class="toast-icon">✦</span> '+msg;
+  const t = document.getElementById('toast');
+  t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
-// ===== INIT =====
-// Populate location filter
-const sel=document.getElementById('locationFilter');
-locations.forEach(l=>{const o=document.createElement('option');o.value=l.name;o.text=l.name;sel.add(o);});
+// === LIVE TIMER ===
+let liveSec = 36;
+setInterval(()=>{
+  const el = document.getElementById('liveTimer');
+  if(!el) return;
+  liveSec++;
+  el.textContent = `${Math.floor(liveSec/60)}:${(liveSec%60).toString().padStart(2,'0')}`;
+}, 1000);
 
-renderKPIs();renderAISummary();renderLocations();renderCalls();renderTranscripts();renderBookings();renderLocDetail();renderCustomers();renderReports();
-initCharts();
+// === AUDIO PLAYBACK ===
+function toggleAudio(bar, idx, dur){
+  const isPlaying = bar.classList.contains('playing');
+  document.querySelectorAll('.audio-bar.playing').forEach(b=>{
+    b.classList.remove('playing');
+    b.querySelector('.play-btn').textContent='▶';
+    if(b._interval) clearInterval(b._interval);
+  });
+  if(!isPlaying){
+    bar.classList.add('playing');
+    bar.querySelector('.play-btn').textContent='⏸';
+    const bars = bar.querySelectorAll('.wb');
+    const [m,s] = dur.split(':').map(Number);
+    const total = m*60+s;
+    let cur = 0;
+    let visualProgress = 0;
+    bar._interval = setInterval(()=>{
+      cur += 0.5;
+      // Visual progress fyller alle 36 bars i 18 sek for synlig feedback
+      visualProgress += bars.length / 36;
+      const played = Math.min(Math.floor(visualProgress), bars.length);
+      bars.forEach((b,i)=>i<played?b.classList.add('played'):b.classList.remove('played'));
+      bar.querySelector('.audio-time').textContent = `${Math.floor(cur/60)}:${Math.floor(cur%60).toString().padStart(2,'0')} / ${dur}`;
+      if(cur>=total){clearInterval(bar._interval);bar.classList.remove('playing');bar.querySelector('.play-btn').textContent='▶';}
+    }, 500);
+    showToast('🎧 Spiller av samtale');
+  }
+}
 
-// Keyboard shortcuts
+// === REPORT MODAL ===
+function generateReport(period){
+  const totalCalls = locations.reduce((s,l)=>s+l.calls,0);
+  const totalBookings = locations.reduce((s,l)=>s+l.bookings,0);
+  const avgAnswer = (locations.reduce((s,l)=>s+l.answer,0)/locations.length).toFixed(1);
+  const isMonth = period==='month';
+  const mult = isMonth ? 4.2 : 1;
+  const calls = Math.round(totalCalls*mult);
+  const bookings = Math.round(totalBookings*mult);
+  const saved = Math.round(totalBookings*540*mult);
+  const periodLabel = isMonth ? 'Mars 2026' : 'Uke 17 — 20.–26. april 2026';
+  const reportTitle = isMonth ? 'Månedsrapport' : 'Ukerapport';
+  const sortedByConv = [...locations].sort((a,b)=>b.rate-a.rate).slice(0,5);
+
+  document.getElementById('reportDoc').innerHTML = `
+    <div class="report-doc-header">
+      <div class="report-brand">
+        <div class="report-brand-logo">M</div>
+        <div><div class="report-brand-name">Mekkern Bilverksted</div><div class="report-brand-tag">${reportTitle}</div></div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:var(--text-muted);">Generert av Arxon AI<br>24. apr 2026, kl 08:42</div>
+    </div>
+    <h1>${reportTitle}</h1>
+    <div class="period">${periodLabel} · 8 lokasjoner</div>
+    <div class="report-stats">
+      <div class="report-stat"><div class="label">Anrop besvart</div><div class="value">${calls.toLocaleString('nb')}</div><div class="delta">▲ ${isMonth?'19':'23'}%</div></div>
+      <div class="report-stat"><div class="label">Bookinger</div><div class="value">${bookings.toLocaleString('nb')}</div><div class="delta">▲ ${isMonth?'15':'18'}%</div></div>
+      <div class="report-stat"><div class="label">Svarrate</div><div class="value">${avgAnswer}%</div><div class="delta">▲ 2.1pp</div></div>
+      <div class="report-stat"><div class="label">Spart omsetning</div><div class="value">${saved.toLocaleString('nb')} kr</div><div class="delta">▲ ${isMonth?'27':'31'}%</div></div>
+    </div>
+    <h2>Sammendrag fra AI</h2>
+    <div class="report-summary">${isMonth?`I mars håndterte AI-en <strong>${calls.toLocaleString('nb')} anrop</strong> på tvers av 8 lokasjoner — opp 19% fra februar. <strong>${bookings.toLocaleString('nb')} bookinger</strong> ble gjort direkte. Lillestrøm hadde høyest konvertering (47%), Tveita lavest (35%) — primært drevet av elbil-spørsmål.`:`Denne uka håndterte AI-en <strong>${calls.toLocaleString('nb')} anrop</strong> — opp 23% fra forrige uke. <strong>${bookings.toLocaleString('nb')} bookinger</strong> ble gjort direkte (38.5% konvertering). Trond på Lillestrøm satte ny rekord med 82% konvertering på torsdag.`}</div>
+    <h2>Topp 5 lokasjoner — konvertering</h2>
+    <ul class="report-list">${sortedByConv.map((l,i)=>`<li><div class="left"><span class="rank ${i<3?'top':''}">#${i+1}</span><span class="name">${l.name}</span><span style="color:var(--text-muted);font-size:12px">— ${l.mgr}</span></div><span class="right-val">${l.rate}%</span></li>`).join('')}</ul>
+    <h2>Anropsvolum per lokasjon</h2>
+    <table><thead><tr><th>Lokasjon</th><th>Anrop</th><th>Bookinger</th><th>Konv.</th><th>Svarrate</th></tr></thead><tbody>${locations.map(l=>`<tr><td><strong>${l.name}</strong></td><td>${Math.round(l.calls*mult)}</td><td>${Math.round(l.bookings*mult)}</td><td>${l.rate}%</td><td>${l.answer}%</td></tr>`).join('')}</tbody></table>
+    <h2>Topp spørsmål fra kunder</h2>
+    <ul class="report-list">${topQuestions.slice(0,5).map((q,i)=>`<li><div class="left"><span class="rank ${i<3?'top':''}">#${i+1}</span><span class="name">${q.q}</span></div><span class="right-val">${Math.round(q.count*mult)} ganger</span></li>`).join('')}</ul>
+    <h2>Anbefalte handlinger</h2>
+    <div class="report-action-callout">
+      <strong>1. Tilpasset elbil-skript:</strong> 14 ganger denne ${isMonth?'måneden':'uka'} spurte kunder om elbil-service.<br><br>
+      <strong>2. Transparent prising i åpningssetning:</strong> 62% av prisspørsmål endte uten booking.<br><br>
+      <strong>3. Følg opp lojale kunder:</strong> Maria Olsen er stamkunde med 4 bookinger denne ${isMonth?'måneden':'uka'}.
+    </div>
+    <div class="footer-note">Generert automatisk av Arxon AI · arxon.no · For spørsmål: lars@mekkern.no</div>
+  `;
+  document.getElementById('reportMeta').textContent = `Mekkern Bilverksted — ${reportTitle} ${isMonth?'mars 2026':'uke 17'}`;
+  document.getElementById('reportOverlay').classList.add('open');
+  showToast('✦ Rapport generert');
+}
+
+function closeReport(){document.getElementById('reportOverlay').classList.remove('open');}
+
+// === KEYBOARD ===
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeDetail();
-  if(e.key==='1')switchPage('oversikt',document.querySelector('[data-page="oversikt"]'));
-  if(e.key==='2')switchPage('samtaler',document.querySelector('[data-page="samtaler"]'));
-  if(e.key==='3')switchPage('bookinger',document.querySelector('[data-page="bookinger"]'));
-  if(e.key==='4')switchPage('lokasjoner',document.querySelector('[data-page="lokasjoner"]'));
-  if(e.key==='5')switchPage('kunder',document.querySelector('[data-page="kunder"]'));
-  if(e.key==='6')switchPage('rapporter',document.querySelector('[data-page="rapporter"]'));
-  if(e.key==='7')switchPage('innstillinger',document.querySelector('[data-page="innstillinger"]'));
+  if(e.key==='Escape'){closeDetail();closeReport();const r=document.querySelector('.search-results');if(r)r.classList.remove('open');}
+  // Skip nummer-snarveier hvis bruker skriver i søkefeltet
+  if(document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  const map={'1':'oversikt','2':'innsikt','3':'samtaler','4':'bookinger','5':'lokasjoner','6':'kunder','7':'rapporter','8':'innstillinger'};
+  if(map[e.key]) switchPage(map[e.key], document.querySelector(`[data-page="${map[e.key]}"]`));
+  // Cmd/Ctrl+F focuser søk
+  if((e.metaKey||e.ctrlKey)&&e.key==='f'){e.preventDefault();document.querySelector('.search input').focus();}
 });
+
+// === NOTIFICATIONS ===
+const notifications = [
+  {icon:'💬',iconType:'message',title:'Christine sendte deg en melding',desc:'"Husk ny pris fra mandag — 4290 kr for storservice. Skriptet er oppdatert."',time:'14 min siden',unread:true,action:()=>showToast('Åpner Christines melding')},
+  {icon:'⚠️',iconType:'warn',title:'Tveita — lav konvertering',desc:'3 lange samtaler uten booking i går kveld. Mulig elbil-skript trengs.',time:'2 t siden',unread:true,action:()=>{closeNotifs();showLocationDetail('Tveita');}},
+  {icon:'📋',iconType:'success',title:'Ukerapport klar',desc:'Uke 17 generert automatisk — 916 anrop, 353 bookinger.',time:'i dag 08:42',unread:true,action:()=>{closeNotifs();generateReport('week');}},
+  {icon:'⭐',iconType:'info',title:'Ny VIP-kunde foreslått',desc:'Anne Bakken har 7 bookinger — vurder VIP-status.',time:'i går',unread:false,action:()=>{closeNotifs();switchPage('kunder',document.querySelector('[data-page=kunder]'));setTimeout(()=>showCustomerPortal('Anne Bakken'),200);}},
+  {icon:'⚡',iconType:'success',title:'AI omplasserte 11 timer',desc:'Bryn dekkmaskin nede — alle 11 kunder takket ja til Alna.',time:'i går 16:52',unread:false,action:()=>showToast('Åpner aktivitets-logg')},
+];
+
+function renderNotifs(){
+  const unreadCount = notifications.filter(n=>n.unread).length;
+  document.getElementById('notifBadge').style.display = unreadCount > 0 ? 'block' : 'none';
+  document.getElementById('notifList').innerHTML = notifications.map((n,i)=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="clickNotif(${i})">
+      <div class="notif-icon ${n.iconType}">${n.icon}</div>
+      <div class="notif-info">
+        <div class="title">${n.title}</div>
+        <div class="desc">${n.desc}</div>
+        <div class="time">${n.time}</div>
+      </div>
+    </div>
+  `).join('');
+  // Update header counter
+  const hdr = document.querySelector('.notif-header h4 span');
+  if(hdr){
+    if(unreadCount > 0){
+      hdr.textContent = unreadCount + ' nye';
+      hdr.style.display = 'inline-block';
+    } else {
+      hdr.style.display = 'none';
+    }
+  }
+}
+
+function toggleNotifs(e){
+  e.stopPropagation();
+  const panel = document.getElementById('notifPanel');
+  panel.classList.toggle('open');
+  // Close search if open
+  const sr = document.querySelector('.search-results');
+  if(sr) sr.classList.remove('open');
+}
+function closeNotifs(){
+  document.getElementById('notifPanel').classList.remove('open');
+}
+function clickNotif(i){
+  notifications[i].unread = false;
+  renderNotifs();
+  notifications[i].action();
+}
+function clearNotifs(e){
+  e.stopPropagation();
+  notifications.forEach(n=>n.unread=false);
+  renderNotifs();
+  showToast('Alle varsler markert som lest');
+}
+
+// Close notif panel when clicking outside
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.notif-wrap')) closeNotifs();
+});
+
+// === SEARCH ===
+function setupSearch(){
+  const input = document.querySelector('.search input');
+  const wrap = document.querySelector('.search');
+  const results = document.createElement('div');
+  results.className = 'search-results';
+  wrap.appendChild(results);
+
+  function initials(name){return name.split(' ').map(s=>s[0]).join('').slice(0,2).toUpperCase();}
+
+  input.addEventListener('input', (e)=>{
+    const q = e.target.value.toLowerCase().trim();
+    if (q.length < 1) { results.classList.remove('open'); return; }
+
+    const mKunder = customers.filter(c => c.name.toLowerCase().includes(q) || c.phone.replace(/\s/g,'').includes(q.replace(/\s/g,'')) || c.service.toLowerCase().includes(q) || c.loc.toLowerCase().includes(q));
+    const mSamtaler = transcripts.filter(t => t.caller.toLowerCase().includes(q) || t.lines.some(l => l.text.toLowerCase().includes(q)));
+    const mLokasjoner = locations.filter(l => l.name.toLowerCase().includes(q) || l.mgr.toLowerCase().includes(q) || l.addr.toLowerCase().includes(q));
+    const mBookinger = bookings.filter(b => b.name.toLowerCase().includes(q) || b.service.toLowerCase().includes(q) || b.loc.toLowerCase().includes(q) || b.time.includes(q));
+    const mFokus = sjefensFokus.filter(f => f.title.toLowerCase().includes(q) || f.desc.toLowerCase().includes(q));
+    const mSpørsmål = topQuestions.filter(t => t.q.toLowerCase().includes(q));
+
+    let html = '';
+    const total = mKunder.length + mSamtaler.length + mLokasjoner.length + mBookinger.length + mFokus.length + mSpørsmål.length;
+
+    if (mKunder.length){
+      html += '<div class="search-group"><div class="search-group-label">Kunder · ' + mKunder.length + '</div>';
+      mKunder.slice(0,4).forEach(c => {
+        html += `<div class="search-result" onclick="closeSearch();showToast('Kunde: ${c.name}');switchPage('kunder', document.querySelector('[data-page=kunder]'))">
+          <div class="search-result-icon cust">${initials(c.name)}</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${c.name}</div>
+            <div class="search-result-meta">${maskPhone(c.phone)} · ${c.loc} · ${c.service}</div>
+          </div>
+          <span class="search-result-pill">${c.count}× booket</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (mLokasjoner.length){
+      html += '<div class="search-group"><div class="search-group-label">Lokasjoner · ' + mLokasjoner.length + '</div>';
+      mLokasjoner.slice(0,4).forEach(l => {
+        html += `<div class="search-result" onclick="closeSearch();showLocationDetail('${l.name}')">
+          <div class="search-result-icon loc">📍</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${l.name}</div>
+            <div class="search-result-meta">${l.addr} · ${l.mgr}</div>
+          </div>
+          <span class="search-result-pill">${l.calls} anrop</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (mSamtaler.length){
+      html += '<div class="search-group"><div class="search-group-label">Samtaler · ' + mSamtaler.length + '</div>';
+      mSamtaler.slice(0,4).forEach(t => {
+        html += `<div class="search-result" onclick="closeSearch();showCallDetail('${t.caller}')">
+          <div class="search-result-icon transc">${initials(t.caller)}</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${t.caller}</div>
+            <div class="search-result-meta">${t.loc} · ${t.dur} · ${t.type==='booking'?'Booking':'Info'}</div>
+          </div>
+          <span class="search-result-pill">${t.dur}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (mBookinger.length){
+      html += '<div class="search-group"><div class="search-group-label">Bookinger · ' + mBookinger.length + '</div>';
+      mBookinger.slice(0,4).forEach(b => {
+        html += `<div class="search-result" onclick="closeSearch();switchPage('bookinger', document.querySelector('[data-page=bookinger]'));showToast('Booking: ${b.name} kl ${b.time}')">
+          <div class="search-result-icon book">📅</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${b.name} — ${b.service}</div>
+            <div class="search-result-meta">📍 ${b.loc} · kl ${b.time}</div>
+          </div>
+          <span class="search-result-pill">${b.time}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (mFokus.length){
+      html += '<div class="search-group"><div class="search-group-label">Sjefens fokus · ' + mFokus.length + '</div>';
+      mFokus.slice(0,3).forEach((f,i) => {
+        const realIdx = sjefensFokus.indexOf(f);
+        html += `<div class="search-result" onclick="closeSearch();showFocusDetail(${realIdx})">
+          <div class="search-result-icon" style="background:#dcefe4;color:#1f5135">${f.emoji}</div>
+          <div class="search-result-info">
+            <div class="search-result-name">${f.title}</div>
+            <div class="search-result-meta">${f.due}</div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (mSpørsmål.length){
+      html += '<div class="search-group"><div class="search-group-label">Spørsmål · ' + mSpørsmål.length + '</div>';
+      mSpørsmål.slice(0,3).forEach((qq,i) => {
+        const realIdx = topQuestions.indexOf(qq);
+        html += `<div class="search-result" onclick="closeSearch();switchPage('innsikt',document.querySelector('[data-page=innsikt]'));showQuestionDetail(${realIdx})">
+          <div class="search-result-icon" style="background:#fef3c7;color:#92400e">🔍</div>
+          <div class="search-result-info">
+            <div class="search-result-name">"${qq.q}"</div>
+            <div class="search-result-meta">Stilt ${qq.count} ganger denne uka</div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (!total) {
+      html = `<div class="search-empty">Ingen treff på "<strong>${e.target.value}</strong>"<div class="search-empty-tip">Prøv et navn, telefonnummer, lokasjon eller tjeneste</div></div>`;
+    }
+
+    results.innerHTML = html;
+    results.classList.add('open');
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e)=>{
+    if (!e.target.closest('.search')) results.classList.remove('open');
+  });
+}
+function closeSearch(){
+  const r = document.querySelector('.search-results');
+  if(r) r.classList.remove('open');
+  const i = document.querySelector('.search input');
+  if(i) i.value = '';
+}
+
+// === INIT ===
+renderKPIs();
+renderFocus();
+renderRecentCalls();
+renderTopQuestions();
+renderAILog();
+renderLocationTable();
+renderCustomers();
+renderTranscripts();
+renderBookings();
+renderReports();
+renderNotifs();
+setupSearch();
 </script>
 </body>
 </html>
